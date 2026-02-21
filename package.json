@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.0",
+    "drizzle-kit": "^0.31.9",
+    "drizzle-orm": "^0.45.1",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
