@@ -1,32 +1,26 @@
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import PasswordInput from '@/components/PasswordInput'
 
-async function login(formData) {
-  'use server'
-  
-  const email = formData.get('email')
-  const password = formData.get('password')
-  const cookieStore = await cookies()
-  
-  if (email === 'hamaramorcha1153@gmail.com' && password === 'Maqbool2@') {
-    cookieStore.set('session', 'demo-session-token', {
-      httpOnly: true,
-      secure: true,
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-      sameSite: 'lax'
-    })
-    redirect('/dashboard')
-  } else {
-    redirect('/login?error=Invalid credentials')
-  }
-}
+export default function LoginPage() {
+  const [email, setEmail] = useState('hamaramorcha1153@gmail.com')
+  const [password, setPassword] = useState('Maqbool2@')
+  const [error, setError] = useState('')
+  const router = useRouter()
 
-export default async function LoginPage({ searchParams }) {
-  const params = await searchParams
-  const error = params?.error
+  async function handleLogin(e) {
+    e.preventDefault()
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    if (res.ok) router.push('/dashboard')
+    else setError('Invalid email or password')
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -37,10 +31,10 @@ export default async function LoginPage({ searchParams }) {
         </div>
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-            Invalid email or password
+            {error}
           </div>
         )}
-        <form action={login} className="mt-8 space-y-6">
+        <form onSubmit={handleLogin} className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -51,7 +45,8 @@ export default async function LoginPage({ searchParams }) {
                 name="email"
                 type="email"
                 required
-                defaultValue="hamaramorcha1153@gmail.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
@@ -59,7 +54,7 @@ export default async function LoginPage({ searchParams }) {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
-              <PasswordInput defaultValue="Maqbool2@" />
+              <PasswordInput value={password} onChange={e => setPassword(e.target.value)} />
             </div>
           </div>
           <div>
