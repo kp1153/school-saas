@@ -1,49 +1,87 @@
-"use client"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
+import Link from 'next/link'
+import PasswordInput from '@/components/PasswordInput'
 
-export default function LoginPage() {
-  const [pass, setPass] = useState("")
-  const [show, setShow] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
-
-  async function handleLogin(e) {
-    e.preventDefault()
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: pass }),
+async function login(formData) {
+  'use server'
+  
+  const email = formData.get('email')
+  const password = formData.get('password')
+  const cookieStore = await cookies()
+  
+  if (email === 'hamaramorcha1153@gmail.com' && password === 'Maqbool2@') {
+    cookieStore.set('session', 'demo-session-token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
     })
-    if (res.ok) router.push("/dashboard")
-    else setError("गलत पासवर्ड")
+    redirect('/dashboard')
+  } else {
+    redirect('/login?error=Invalid credentials')
   }
+}
+
+export default async function LoginPage({ searchParams }) {
+  const params = await searchParams
+  const error = params?.error
 
   return (
-    <div className="min-h-screen bg-[#1a3f7a] flex items-center justify-center">
-      <form onSubmit={handleLogin} className="bg-white rounded-xl p-8 w-80 space-y-4 shadow-xl">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-[#1a3f7a]">विद्यालय प्रबंधन</div>
-          <div className="text-gray-400 text-sm mt-1">लॉगिन करें</div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+            Sign in to EduSaaS
+          </h2>
         </div>
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        <div className="relative">
-          <input
-            type={show ? "text" : "password"}
-            placeholder="पासवर्ड डालें"
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#1a3f7a] pr-10"
-            value={pass}
-            onChange={e => setPass(e.target.value)} />
-          <button type="button" onClick={() => setShow(!show)}
-            className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-700">
-            {show ? "🙈" : "👁️"}
-          </button>
-        </div>
-        <button type="submit"
-          className="w-full bg-[#1a3f7a] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0f2d5e]">
-          लॉगिन
-        </button>
-      </form>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            Invalid email or password
+          </div>
+        )}
+
+        <form action={login} className="mt-8 space-y-6">
+          <div className="rounded-md shadow-sm space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                defaultValue="hamaramorcha1153@gmail.com"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <PasswordInput defaultValue="Maqbool2@" />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Sign in
+            </button>
+          </div>
+
+          <div className="text-center text-sm text-gray-500">
+            <Link href="/" className="text-indigo-600 hover:text-indigo-500">
+              ← Back to home
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }

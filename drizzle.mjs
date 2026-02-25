@@ -1,4 +1,6 @@
-/** @type { import("drizzle-kit").Config } */
+import { config } from 'dotenv'
+config({ path: '.env.local' })
+
 export default {
   dialect: "turso",
   schema: "./lib/schema.js",
