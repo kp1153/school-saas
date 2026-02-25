@@ -22,7 +22,6 @@ export default async function RootLayout({ children }) {
         
         {session ? (
           <div className="flex min-h-screen">
-            {/* Sidebar */}
             <aside className="w-64 bg-indigo-900 text-white flex flex-col fixed h-full">
               <div className="px-6 py-5 border-b border-indigo-800">
                 <div className="text-2xl font-bold text-white">EduSaaS</div>
@@ -44,12 +43,14 @@ export default async function RootLayout({ children }) {
                 <Link href="/attendance" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
                   ✅ Attendance
                 </Link>
-                <Link href="/notices" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
-                📋 Notice Board
-                </Link>
-
                 <Link href="/exams" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
-                📝 Exams & Results
+                  📝 Exams & Results
+                </Link>
+                <Link href="/notices" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
+                  📋 Notice Board
+                </Link>
+                <Link href="/timetable" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
+                  🗓️ Timetable
                 </Link>
               </nav>
               <div className="px-4 py-4 border-t border-indigo-800">
@@ -59,7 +60,6 @@ export default async function RootLayout({ children }) {
               </div>
             </aside>
 
-            {/* Main content */}
             <main className="ml-64 flex-1 p-8">
               {children}
             </main>
