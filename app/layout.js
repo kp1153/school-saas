@@ -44,6 +44,13 @@ export default async function RootLayout({ children }) {
                 <Link href="/attendance" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
                   ✅ Attendance
                 </Link>
+                <Link href="/notices" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
+                📋 Notice Board
+                </Link>
+
+                <Link href="/exams" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium">
+                📝 Exams & Results
+                </Link>
               </nav>
               <div className="px-4 py-4 border-t border-indigo-800">
                 <Link href="/logout" className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-300 hover:bg-indigo-800 transition text-sm">
