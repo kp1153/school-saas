@@ -1,24 +1,19 @@
-import { NextResponse } from 'next/server'
-
-const publicPaths = ['/', '/login', '/signup']
+import { NextResponse } from "next/server";
 
 export function proxy(request) {
-  const { pathname } = request.nextUrl
-  const session = request.cookies.get('session')?.value
+  const session = request.cookies.get("session");
+  const isAuth = session?.value === "authenticated";
+  const isLoginPage = request.nextUrl.pathname === "/";
 
-  if (publicPaths.includes(pathname)) {
-    return NextResponse.next()
+  if (!isAuth && !isLoginPage) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
-
-  if (!session) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('from', pathname)
-    return NextResponse.redirect(loginUrl)
+  if (isAuth && isLoginPage) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
-
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
-}
+  matcher: ["/((?!_next|favicon.ico|api).*)"],
+};
