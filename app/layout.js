@@ -90,15 +90,13 @@ export default async function RootLayout({ children }) {
                 >
                   📊 Reports
                 </Link>
-              </nav>
-              <div className="px-4 py-4 border-t border-indigo-800">
                 <Link
                   href="/logout"
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-300 hover:bg-indigo-800 transition text-sm"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-300 hover:bg-indigo-800 transition text-sm font-medium"
                 >
                   🚪 Logout
                 </Link>
-              </div>
+              </nav>
             </aside>
 
             <main className="ml-64 flex-1 p-8">{children}</main>
