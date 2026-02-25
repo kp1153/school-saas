@@ -11,16 +11,12 @@ async function login(formData) {
   const cookieStore = await cookies()
   
   if (email === 'hamaramorcha1153@gmail.com' && password === 'Maqbool2@') {
-    // Vercel ke liye domain bhi set karo
     cookieStore.set('session', 'demo-session-token', {
       httpOnly: true,
-      secure: true,  // Vercel par secure true rahega
-      maxAge: 60 * 60 * 24 * 7, // 1 week
+      secure: true,
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
-      sameSite: 'lax',  // Vercel ke liye ye zaroori hai
-      domain: process.env.NODE_ENV === 'production' 
-        ? '.vercel.app'  // production mein domain set karo
-        : undefined      // localhost mein undefined rakho
+      sameSite: 'lax'
     })
     redirect('/dashboard')
   } else {
@@ -31,7 +27,6 @@ async function login(formData) {
 export default async function LoginPage({ searchParams }) {
   const params = await searchParams
   const error = params?.error
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -40,13 +35,11 @@ export default async function LoginPage({ searchParams }) {
             Sign in to EduSaaS
           </h2>
         </div>
-
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
             Invalid email or password
           </div>
         )}
-
         <form action={login} className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm space-y-4">
             <div>
@@ -62,7 +55,6 @@ export default async function LoginPage({ searchParams }) {
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
-            
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
@@ -70,7 +62,6 @@ export default async function LoginPage({ searchParams }) {
               <PasswordInput defaultValue="Maqbool2@" />
             </div>
           </div>
-
           <div>
             <button
               type="submit"
@@ -79,7 +70,6 @@ export default async function LoginPage({ searchParams }) {
               Sign in
             </button>
           </div>
-
           <div className="text-center text-sm text-gray-500">
             <Link href="/" className="text-indigo-600 hover:text-indigo-500">
               ← Back to home
