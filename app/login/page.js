@@ -1,23 +1,23 @@
-'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('hamaramorcha1153@gmail.com')
-  const [password, setPassword] = useState('Maqbool2@')
-  const [error, setError] = useState('')
-  const router = useRouter()
+  const [email, setEmail] = useState("hamaramorcha1153@gmail.com");
+  const [password, setPassword] = useState("Maqbool2@");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   async function handleLogin(e) {
-    e.preventDefault()
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    e.preventDefault();
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
-    })
-    if (res.ok) router.push('/dashboard')
-    else setError('Invalid email or password')
+    });
+    if (res.ok) router.push("/dashboard");
+    else setError("Invalid email or password");
   }
 
   return (
@@ -34,22 +34,26 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="mt-8 space-y-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <input
                 type="email"
                 required
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 required
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
@@ -68,5 +72,5 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }

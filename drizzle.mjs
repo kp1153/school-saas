@@ -1,5 +1,5 @@
-import { config } from 'dotenv'
-config({ path: '.env.local' })
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
 export default {
   dialect: "turso",
@@ -9,4 +9,4 @@ export default {
     url: process.env.TURSO_DATABASE_URL,
     authToken: process.env.TURSO_AUTH_TOKEN,
   },
-}
+};

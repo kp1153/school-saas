@@ -57,12 +57,8 @@
           "name": "fees_student_id_students_id_fk",
           "tableFrom": "fees",
           "tableTo": "students",
-          "columnsFrom": [
-            "student_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["student_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -151,9 +147,7 @@
       "indexes": {
         "students_roll_number_unique": {
           "name": "students_roll_number_unique",
-          "columns": [
-            "roll_number"
-          ],
+          "columns": ["roll_number"],
           "isUnique": true
         }
       },

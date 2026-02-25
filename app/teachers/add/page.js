@@ -1,34 +1,39 @@
-import { redirect } from 'next/navigation'
-import { initDB } from '@/lib/db'
+import { redirect } from "next/navigation";
+import { initDB } from "@/lib/db";
 
 async function addTeacher(formData) {
-  'use server'
-  
-  const name = formData.get('name')
-  const subject = formData.get('subject')
-  const qualification = formData.get('qualification')
-  const phone = formData.get('phone')
-  const email = formData.get('email')
+  "use server";
 
-  const db = await initDB()
-  
+  const name = formData.get("name");
+  const subject = formData.get("subject");
+  const qualification = formData.get("qualification");
+  const phone = formData.get("phone");
+  const email = formData.get("email");
+
+  const db = await initDB();
+
   await db.execute({
     sql: `INSERT INTO teachers (name, subject, qualification, phone, email, joining_date) 
           VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-    args: [name, subject, qualification, phone, email]
-  })
+    args: [name, subject, qualification, phone, email],
+  });
 
-  redirect('/teachers')
+  redirect("/teachers");
 }
 
 export default function AddTeacherPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Add New Teacher</h1>
-      
-      <form action={addTeacher} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
+
+      <form
+        action={addTeacher}
+        className="bg-white rounded-lg border border-gray-200 p-6 space-y-4"
+      >
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name
+          </label>
           <input
             type="text"
             name="name"
@@ -38,7 +43,9 @@ export default function AddTeacherPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Subject
+          </label>
           <input
             type="text"
             name="subject"
@@ -49,7 +56,9 @@ export default function AddTeacherPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Qualification</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Qualification
+          </label>
           <input
             type="text"
             name="qualification"
@@ -60,7 +69,9 @@ export default function AddTeacherPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Phone Number
+          </label>
           <input
             type="tel"
             name="phone"
@@ -70,7 +81,9 @@ export default function AddTeacherPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
           <input
             type="email"
             name="email"
@@ -95,5 +108,5 @@ export default function AddTeacherPage() {
         </div>
       </form>
     </div>
-  )
+  );
 }

@@ -1,18 +1,18 @@
-import { createClient } from '@libsql/client/http'
-import { NextResponse } from 'next/server'
+import { createClient } from "@libsql/client/http";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   const client = createClient({
     url: process.env.TURSO_DATABASE_URL,
     authToken: process.env.TURSO_AUTH_TOKEN,
-  })
+  });
 
   try {
     // Tables drop करो
-    await client.execute("DROP TABLE IF EXISTS fees")
-    await client.execute("DROP TABLE IF EXISTS teachers")
-    await client.execute("DROP TABLE IF EXISTS students")
-    
+    await client.execute("DROP TABLE IF EXISTS fees");
+    await client.execute("DROP TABLE IF EXISTS teachers");
+    await client.execute("DROP TABLE IF EXISTS students");
+
     // Phir se tables create करो
     await client.execute(`
       CREATE TABLE students (
@@ -27,7 +27,7 @@ export async function GET() {
         admission_date DATETIME DEFAULT CURRENT_TIMESTAMP,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
     await client.execute(`
       CREATE TABLE teachers (
@@ -39,7 +39,7 @@ export async function GET() {
         email TEXT,
         joining_date DATETIME DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
     await client.execute(`
       CREATE TABLE fees (
@@ -51,10 +51,13 @@ export async function GET() {
         status TEXT DEFAULT 'pending',
         FOREIGN KEY (student_id) REFERENCES students (id)
       )
-    `)
+    `);
 
-    return NextResponse.json({ success: true, message: 'Database reset complete' })
+    return NextResponse.json({
+      success: true,
+      message: "Database reset complete",
+    });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message })
+    return NextResponse.json({ success: false, error: error.message });
   }
 }

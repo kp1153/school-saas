@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -9,11 +9,12 @@ export default function HomePage() {
           School Management Made Simple
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Complete platform for private schools to manage students, fees, and communication
+          Complete platform for private schools to manage students, fees, and
+          communication
         </p>
         <div className="mt-8">
-          <Link 
-            href="/dashboard" 
+          <Link
+            href="/dashboard"
             className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700"
           >
             Live Demo
@@ -25,11 +26,15 @@ export default function HomePage() {
       <div className="grid md:grid-cols-3 gap-8">
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-lg font-semibold mb-2">Student Records</h3>
-          <p className="text-gray-600">Track attendance, grades, and personal info</p>
+          <p className="text-gray-600">
+            Track attendance, grades, and personal info
+          </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-lg font-semibold mb-2">Fee Management</h3>
-          <p className="text-gray-600">Real-time collection status and reminders</p>
+          <p className="text-gray-600">
+            Real-time collection status and reminders
+          </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
           <h3 className="text-lg font-semibold mb-2">Reports</h3>
@@ -37,5 +42,5 @@ export default function HomePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

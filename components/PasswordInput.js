@@ -1,14 +1,14 @@
-'use client'
-import { useState } from 'react'
+"use client";
+import { useState } from "react";
 
 export default function PasswordInput({ value, onChange }) {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="relative">
       <input
         id="password"
         name="password"
-        type={showPassword ? 'text' : 'password'}
+        type={showPassword ? "text" : "password"}
         required
         value={value}
         onChange={onChange}
@@ -19,8 +19,8 @@ export default function PasswordInput({ value, onChange }) {
         onClick={() => setShowPassword(!showPassword)}
         className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
       >
-        {showPassword ? '🔒' : '👁️'}
+        {showPassword ? "🔒" : "👁️"}
       </button>
     </div>
-  )
+  );
 }

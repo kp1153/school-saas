@@ -4,7 +4,7 @@ export function proxy(request) {
   const session = request.cookies.get("session");
   const isAuth = !!session?.value;
   const pathname = request.nextUrl.pathname;
-  
+
   const publicPaths = ["/", "/login"];
   const isPublicPath = publicPaths.includes(pathname);
 

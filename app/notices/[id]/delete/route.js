@@ -1,12 +1,12 @@
-import { db } from '@/lib/db-drizzle'
-import { notices } from '@/lib/schema'
-import { eq } from 'drizzle-orm'
-import { redirect } from 'next/navigation'
+import { db } from "@/lib/db-drizzle";
+import { notices } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 export async function GET(request, { params }) {
-  const { id } = await params
+  const { id } = await params;
 
-  await db.delete(notices).where(eq(notices.id, parseInt(id)))
+  await db.delete(notices).where(eq(notices.id, parseInt(id)));
 
-  redirect('/notices')
+  redirect("/notices");
 }
