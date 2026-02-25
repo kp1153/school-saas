@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 
 export function proxy(request) {
   const session = request.cookies.get("session");
-  console.log("SESSION:", session);
   const isAuth = !!session?.value;
   const pathname = request.nextUrl.pathname;
   
