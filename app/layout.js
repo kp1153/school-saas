@@ -78,6 +78,12 @@ export default async function RootLayout({ children }) {
                 >
                   🗓️ Timetable
                 </Link>
+                <Link
+                  href="/parent/login"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                >
+                  👨‍👩‍👧 Parent Portal
+                </Link>
               </nav>
               <div className="px-4 py-4 border-t border-indigo-800">
                 <Link
