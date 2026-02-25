@@ -11,11 +11,16 @@ async function login(formData) {
   const cookieStore = await cookies()
   
   if (email === 'hamaramorcha1153@gmail.com' && password === 'Maqbool2@') {
+    // Vercel ke liye domain bhi set karo
     cookieStore.set('session', 'demo-session-token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7,
+      secure: true,  // Vercel par secure true rahega
+      maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
+      sameSite: 'lax',  // Vercel ke liye ye zaroori hai
+      domain: process.env.NODE_ENV === 'production' 
+        ? '.vercel.app'  // production mein domain set karo
+        : undefined      // localhost mein undefined rakho
     })
     redirect('/dashboard')
   } else {
