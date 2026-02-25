@@ -22,7 +22,7 @@ export default async function RootLayout({ children }) {
 
         {session ? (
           <div className="flex min-h-screen">
-            <aside className="w-64 bg-indigo-900 text-white flex flex-col fixed h-full">
+            <aside className="w-64 bg-indigo-900 text-white flex flex-col fixed h-full overflow-y-auto">
               <div className="px-6 py-5 border-b border-indigo-800">
                 <div className="text-2xl font-bold text-white">EduSaaS</div>
                 <div className="text-indigo-300 text-xs mt-1">
