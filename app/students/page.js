@@ -68,18 +68,23 @@ export default async function StudentsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  <Link
-                    href={`/students/${student.id}`}
-                    className="text-indigo-600 hover:text-indigo-900 mr-3"
-                  >
-                    View
-                  </Link>
-                  <Link
-                    href={`/students/${student.id}/edit`}
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    Edit
-                  </Link>
+                  <div className="flex gap-3">
+                    <Link
+                      href={`/students/${student.id}`}
+                      className="text-indigo-600 hover:text-indigo-900">
+                      View
+                    </Link>
+                    <Link
+                      href={`/students/${student.id}/edit`}
+                      className="text-gray-600 hover:text-gray-900">
+                      Edit
+                    </Link>
+                    <Link
+                      href={`/students/${student.id}/parent`}
+                      className="text-green-600 hover:text-green-800">
+                      👨‍👩‍👧 Parent
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
