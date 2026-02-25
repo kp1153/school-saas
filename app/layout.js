@@ -104,7 +104,24 @@ export default async function RootLayout({ children }) {
             <main className="ml-64 flex-1 p-8">{children}</main>
           </div>
         ) : (
-          <main>{children}</main>
+          <div>
+            <nav className="bg-white border-b border-gray-200">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16">
+                  <div className="text-xl font-bold text-indigo-600">
+                    EduSaaS
+                  </div>
+                  <Link
+                    href="/login"
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium"
+                  >
+                    Login
+                  </Link>
+                </div>
+              </div>
+            </nav>
+            <main>{children}</main>
+          </div>
         )}
       </body>
     </html>
