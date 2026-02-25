@@ -29,7 +29,7 @@ export default async function RootLayout({ children }) {
                   School Management
                 </div>
               </div>
-              <nav className="flex-1 px-4 py-6 space-y-1">
+             <nav className="px-4 py-6 space-y-1">
                 <Link
                   href="/dashboard"
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
