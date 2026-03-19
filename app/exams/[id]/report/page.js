@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import PrintButton from "./PrintButton";
 import { db } from "@/lib/db-drizzle";
-import { exams, students, results } from "@/lib/schema";
+import { exams, students, results, school_settings } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
@@ -15,6 +15,9 @@ export default async function ReportCardPage({ params }) {
 
   const classStudents = await db.select().from(students).where(eq(students.class, exam.class));
   const examResults = await db.select().from(results).where(eq(results.exam_id, parseInt(id)));
+
+  const settingsResult = await db.select().from(school_settings);
+  const settings = settingsResult[0] || {};
 
   const resultsMap = {};
   examResults.forEach((r) => { resultsMap[r.student_id] = r; });
@@ -44,7 +47,11 @@ export default async function ReportCardPage({ params }) {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 print:shadow-none print:border-none">
         <div className="text-center border-b border-gray-200 pb-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">EduSaaS School</h2>
+          {settings.logo_url && (
+            <img src={settings.logo_url} alt="logo" className="h-16 object-contain mx-auto mb-3" />
+          )}
+          <h2 className="text-2xl font-bold text-gray-900">{settings.school_name || "EduSaaS School"}</h2>
+          {settings.address && <p className="text-gray-400 text-xs mt-1">{settings.address}</p>}
           <p className="text-gray-500 text-sm mt-1">Result Sheet</p>
           <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
             <div><span className="text-gray-500">Exam:</span><span className="font-medium text-gray-900 ml-1">{exam.name}</span></div>

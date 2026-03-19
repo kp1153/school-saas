@@ -1,5 +1,5 @@
 import { db } from '@/lib/db-drizzle'
-import { fees, students } from '@/lib/schema'
+import { fees, students, school_settings } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 import PrintButton from './PrintButton'
 
@@ -24,8 +24,11 @@ export default async function FeeReceiptPage({ params }) {
     .leftJoin(students, eq(fees.student_id, students.id))
     .where(eq(fees.id, parseInt(id)))
 
-  if (!fee) return <div className="p-8 text-red-500">Receipt नहीं मिली।</div>
-  if (fee.status !== 'paid') return <div className="p-8 text-yellow-600">यह fee अभी paid नहीं है।</div>
+  if (!fee) return <div className="p-8 text-red-500">Receipt not found.</div>
+  if (fee.status !== 'paid') return <div className="p-8 text-yellow-600">This fee is not paid yet.</div>
+
+  const settingsResult = await db.select().from(school_settings)
+  const settings = settingsResult[0] || {}
 
   const receiptNo = `RCP-${String(fee.id).padStart(5, '0')}`
   const paidDate = fee.paid_date
@@ -54,7 +57,11 @@ export default async function FeeReceiptPage({ params }) {
 
         {/* Header */}
         <div className="text-center border-b border-gray-200 pb-6 mb-6">
-          <h2 className="text-2xl font-bold text-indigo-700">EduSaaS School</h2>
+          {settings.logo_url && (
+            <img src={settings.logo_url} alt="logo" className="h-16 object-contain mx-auto mb-3" />
+          )}
+          <h2 className="text-2xl font-bold text-indigo-700">{settings.school_name || "EduSaaS School"}</h2>
+          {settings.address && <p className="text-gray-400 text-xs mt-1">{settings.address}</p>}
           <p className="text-gray-500 text-sm mt-1">Fee Payment Receipt</p>
         </div>
 
