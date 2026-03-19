@@ -89,6 +89,12 @@ export default async function RootLayout({ children }) {
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
                 >
                   📊 Reports
+                  <Link
+                    href="/settings"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                  >
+                    ⚙️ Settings
+                  </Link>
                 </Link>
                 <Link
                   href="/logout"
