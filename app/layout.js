@@ -11,25 +11,42 @@ export const metadata = {
   description: "Complete solution for private educational institutions",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#4338ca",
+};
+
 export default async function RootLayout({ children }) {
   const cookieStore = await cookies();
   const session = cookieStore.get("session")?.value;
 
   return (
     <html lang="en">
+      <head>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="EduSaaS" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <script dangerouslySetInnerHTML={{
+          __html: `if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'))}`
+        }} />
+      </head>
       <body className={`${inter.className} min-h-screen bg-gray-100`}>
         <FlashMessageContainer />
 
         {session ? (
           <div className="flex min-h-screen">
-            <aside className="w-64 bg-indigo-900 text-white flex flex-col fixed h-full overflow-y-auto">
+            <aside className="hidden md:flex w-64 bg-indigo-900 text-white flex-col fixed h-full overflow-y-auto">
               <div className="px-6 py-5 border-b border-indigo-800">
                 <div className="text-2xl font-bold text-white">EduSaaS</div>
                 <div className="text-indigo-300 text-xs mt-1">
                   School Management
                 </div>
               </div>
-              <nav className="px-4 py-6 space-y-1">
+              <nav className="px-4 py-6 space-y-1 flex-1">
                 <Link
                   href="/dashboard"
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
@@ -89,12 +106,12 @@ export default async function RootLayout({ children }) {
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
                 >
                   📊 Reports
-                  <Link
-                    href="/settings"
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
-                  >
-                    ⚙️ Settings
-                  </Link>
+                </Link>
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                >
+                  ⚙️ Settings
                 </Link>
                 <Link
                   href="/logout"
@@ -105,7 +122,20 @@ export default async function RootLayout({ children }) {
               </nav>
             </aside>
 
-            <main className="ml-64 flex-1 p-8">{children}</main>
+            <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-indigo-900 flex items-center justify-between px-4 py-3 shadow-md">
+              <div className="text-white font-bold text-lg">EduSaaS</div>
+              <Link href="/logout" className="text-red-300 text-sm">Logout</Link>
+            </div>
+
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex">
+              <Link href="/dashboard" className="flex-1 flex flex-col items-center justify-center py-2 text-[11px] font-medium text-gray-500">📊<span>Dashboard</span></Link>
+              <Link href="/students" className="flex-1 flex flex-col items-center justify-center py-2 text-[11px] font-medium text-gray-500">🎓<span>Students</span></Link>
+              <Link href="/fees" className="flex-1 flex flex-col items-center justify-center py-2 text-[11px] font-medium text-gray-500">💰<span>Fees</span></Link>
+              <Link href="/attendance" className="flex-1 flex flex-col items-center justify-center py-2 text-[11px] font-medium text-gray-500">✅<span>Attend</span></Link>
+              <Link href="/notices" className="flex-1 flex flex-col items-center justify-center py-2 text-[11px] font-medium text-gray-500">📋<span>Notices</span></Link>
+            </div>
+
+            <main className="w-full md:ml-64 flex-1 p-4 pt-16 pb-24 md:pt-6 md:pb-6 md:p-8">{children}</main>
           </div>
         ) : (
           <div>

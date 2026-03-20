@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db-drizzle";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { Resend } from "resend";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -54,6 +55,18 @@ export async function GET(request) {
       expiry_date: expiryDate,
     }).returning();
     user = inserted[0];
+
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      await resend.emails.send({
+        from: "EduSaaS <onboarding@resend.dev>",
+        to: ["prasad.kamta@gmail.com"],
+        subject: `New user — ${email}`,
+        html: `<p>Email: ${email}</p><p>Name: ${name}</p>`,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   } else {
     user = existing[0];
   }
