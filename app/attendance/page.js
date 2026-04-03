@@ -1,3 +1,4 @@
+// app/attendance/page.js
 export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db-drizzle";
@@ -18,14 +19,22 @@ export default async function AttendancePage({ searchParams }) {
     ? allStudents.filter((s) => s.class === selectedClass)
     : allStudents;
 
-  const todayAttendance = await db.select().from(attendance).where(eq(attendance.date, selectedDate));
+  const todayAttendance = await db
+    .select()
+    .from(attendance)
+    .where(eq(attendance.date, selectedDate));
 
   const attendanceMap = {};
   todayAttendance.forEach((a) => { attendanceMap[a.student_id] = a.status; });
 
-  const presentCount = filteredStudents.filter(s => attendanceMap[s.id] === "present").length;
-  const absentCount = filteredStudents.filter(s => attendanceMap[s.id] === "absent").length;
-  const notMarked = filteredStudents.filter(s => !attendanceMap[s.id]).length;
+  const presentCount = filteredStudents.filter((s) => attendanceMap[s.id] === "present").length;
+  const absentCount = filteredStudents.filter((s) => attendanceMap[s.id] === "absent").length;
+  const notMarked = filteredStudents.filter((s) => !attendanceMap[s.id]).length;
+
+  // Absent students with phone numbers — for WhatsApp links
+  const absentWithPhone = filteredStudents.filter(
+    (s) => attendanceMap[s.id] === "absent" && s.parent_phone
+  );
 
   return (
     <div>
@@ -34,8 +43,10 @@ export default async function AttendancePage({ searchParams }) {
           <h1 className="text-xl font-bold text-gray-900">Attendance</h1>
           <p className="text-gray-500 text-xs mt-0.5">{selectedDate}</p>
         </div>
-        <Link href={`/attendance/mark?date=${selectedDate}&class=${selectedClass}`}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        <Link
+          href={`/attendance/mark?date=${selectedDate}&class=${selectedClass}`}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+        >
           Mark
         </Link>
       </div>
@@ -79,6 +90,40 @@ export default async function AttendancePage({ searchParams }) {
         </div>
       </div>
 
+      {/* WhatsApp Alert Section */}
+      {absentWithPhone.length > 0 && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-5">
+          <p className="text-sm font-semibold text-green-800 mb-3">
+            📲 Absent Parents को WhatsApp करो ({absentWithPhone.length})
+          </p>
+          <div className="space-y-2">
+            {absentWithPhone.map((s) => {
+              const phone = s.parent_phone.replace(/\D/g, "");
+              const fullPhone = phone.startsWith("91") ? phone : `91${phone}`;
+              const msg = encodeURIComponent(
+                `प्रिय ${s.parent_name || "अभिभावक"},\n\nआपके बच्चे ${s.name} (Class ${s.class}${s.section ? " " + s.section : ""}) आज ${selectedDate} को अनुपस्थित हैं। कृपया सूचित करें।\n\n— School Management`
+              );
+              return (
+                <div key={s.id}
+                  className="flex justify-between items-center bg-white rounded-lg px-3 py-2 border border-green-100">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{s.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {s.parent_name || "—"} · {s.parent_phone}
+                    </p>
+                  </div>
+                  <a href={`https://wa.me/${fullPhone}?text=${msg}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-green-700">
+                    WhatsApp
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {filteredStudents.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-400 text-sm">
           No students found.
@@ -86,10 +131,13 @@ export default async function AttendancePage({ searchParams }) {
       ) : (
         <div className="space-y-2">
           {filteredStudents.map((student) => (
-            <div key={student.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm flex justify-between items-center">
+            <div key={student.id}
+              className="bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm flex justify-between items-center">
               <div>
                 <p className="font-medium text-gray-900 text-sm">{student.name}</p>
-                <p className="text-gray-400 text-xs">Class {student.class} {student.section} · Roll {student.roll_number}</p>
+                <p className="text-gray-400 text-xs">
+                  Class {student.class} {student.section} · Roll {student.roll_number}
+                </p>
               </div>
               <span className={`px-2 py-1 text-xs rounded-full font-medium ${
                 attendanceMap[student.id] === "present" ? "bg-green-100 text-green-700" :
