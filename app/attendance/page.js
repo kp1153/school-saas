@@ -29,94 +29,79 @@ export default async function AttendancePage({ searchParams }) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
-          <p className="text-gray-500 text-sm mt-1">{selectedDate}</p>
+          <h1 className="text-xl font-bold text-gray-900">Attendance</h1>
+          <p className="text-gray-500 text-xs mt-0.5">{selectedDate}</p>
         </div>
         <Link href={`/attendance/mark?date=${selectedDate}&class=${selectedClass}`}
-          className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition text-sm font-medium shadow-sm">
-          + Mark Attendance
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          Mark
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-        <form className="flex gap-4 items-end">
-          <div>
-            <label className="block text-xs text-gray-500 mb-1">Date</label>
-            <input type="date" name="date" defaultValue={selectedDate}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1">Class</label>
-            <select name="class" defaultValue={selectedClass}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="">All Classes</option>
-              {classes.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
+      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-4 shadow-sm">
+        <form className="flex flex-col gap-3">
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="block text-xs text-gray-500 mb-1">Date</label>
+              <input type="date" name="date" defaultValue={selectedDate}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs text-gray-500 mb-1">Class</label>
+              <select name="class" defaultValue={selectedClass}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="">All Classes</option>
+                {classes.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
           </div>
           <button type="submit"
-            className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700">
+            className="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium">
             Filter
           </button>
         </form>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-50 rounded-xl p-4 text-center border border-green-100">
-          <div className="text-2xl font-bold text-green-700">{presentCount}</div>
-          <div className="text-xs text-green-600 mt-1">Present</div>
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        <div className="bg-green-50 rounded-xl p-3 text-center border border-green-100">
+          <div className="text-xl font-bold text-green-700">{presentCount}</div>
+          <div className="text-xs text-green-600 mt-0.5">Present</div>
         </div>
-        <div className="bg-red-50 rounded-xl p-4 text-center border border-red-100">
-          <div className="text-2xl font-bold text-red-600">{absentCount}</div>
-          <div className="text-xs text-red-500 mt-1">Absent</div>
+        <div className="bg-red-50 rounded-xl p-3 text-center border border-red-100">
+          <div className="text-xl font-bold text-red-600">{absentCount}</div>
+          <div className="text-xs text-red-500 mt-0.5">Absent</div>
         </div>
-        <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
-          <div className="text-2xl font-bold text-gray-500">{notMarked}</div>
-          <div className="text-xs text-gray-400 mt-1">Not Marked</div>
+        <div className="bg-gray-50 rounded-xl p-3 text-center border border-gray-200">
+          <div className="text-xl font-bold text-gray-500">{notMarked}</div>
+          <div className="text-xs text-gray-400 mt-0.5">Not Marked</div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredStudents.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-400">No students found.</td>
-              </tr>
-            ) : (
-              filteredStudents.map((student) => (
-                <tr key={student.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{student.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{student.class} - {student.section}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{student.roll_number}</td>
-                  <td className="px-6 py-4">
-                    {attendanceMap[student.id] ? (
-                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                        attendanceMap[student.id] === "present"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}>
-                        {attendanceMap[student.id]}
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-500">Not marked</span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {filteredStudents.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-400 text-sm">
+          No students found.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {filteredStudents.map((student) => (
+            <div key={student.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm flex justify-between items-center">
+              <div>
+                <p className="font-medium text-gray-900 text-sm">{student.name}</p>
+                <p className="text-gray-400 text-xs">Class {student.class} {student.section} · Roll {student.roll_number}</p>
+              </div>
+              <span className={`px-2 py-1 text-xs rounded-full font-medium ${
+                attendanceMap[student.id] === "present" ? "bg-green-100 text-green-700" :
+                attendanceMap[student.id] === "absent" ? "bg-red-100 text-red-700" :
+                "bg-gray-100 text-gray-500"
+              }`}>
+                {attendanceMap[student.id] || "—"}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

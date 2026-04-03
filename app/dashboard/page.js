@@ -44,119 +44,117 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-500 text-xs mt-0.5">
             {new Date().toLocaleDateString("en-IN", {
               weekday: "long", day: "numeric", month: "long", year: "numeric",
             })}
           </p>
         </div>
         <Link href="/students/add"
-          className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition text-sm font-medium shadow-sm">
-          + Add New Student
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+          + Student
         </Link>
       </div>
 
-      <div className="grid grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">🎓</div>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">🎓</div>
           <div className="text-2xl font-bold text-gray-900">{studentCount?.count || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Total Students</div>
+          <div className="text-xs text-gray-500 mt-0.5">Total Students</div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">👨‍🏫</div>
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">👨‍🏫</div>
           <div className="text-2xl font-bold text-gray-900">{teacherCount?.count || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Total Teachers</div>
+          <div className="text-xs text-gray-500 mt-0.5">Total Teachers</div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">⚠️</div>
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">⚠️</div>
           <div className="text-2xl font-bold text-red-600">₹{pendingFees?.total || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Pending Fees ({pendingFees?.count || 0})</div>
+          <div className="text-xs text-gray-500 mt-0.5">Pending Fees ({pendingFees?.count || 0})</div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">✅</div>
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">✅</div>
           <div className="text-2xl font-bold text-green-600">₹{paidFees?.total || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Fees Collected</div>
+          <div className="text-xs text-gray-500 mt-0.5">Fees Collected</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">🟢</div>
+      <div className="grid grid-cols-2 gap-3 mb-5">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">🟢</div>
           <div className="text-2xl font-bold text-green-600">{todayPresent?.count || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Present Today</div>
+          <div className="text-xs text-gray-500 mt-0.5">Present Today</div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">🔴</div>
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">🔴</div>
           <div className="text-2xl font-bold text-red-500">{todayAbsent?.count || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Absent Today</div>
+          <div className="text-xs text-gray-500 mt-0.5">Absent Today</div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">📝</div>
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">📝</div>
           <div className="text-2xl font-bold text-gray-900">{examCount?.count || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Total Exams</div>
+          <div className="text-xs text-gray-500 mt-0.5">Total Exams</div>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <div className="text-3xl mb-2">📋</div>
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="text-2xl mb-1">📋</div>
           <div className="text-2xl font-bold text-gray-900">{noticeCount?.count || 0}</div>
-          <div className="text-sm text-gray-500 mt-1">Notices Posted</div>
+          <div className="text-xs text-gray-500 mt-0.5">Notices</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="space-y-2">
-            <Link href="/students/add" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 py-1">
-              ➕ Add Student
-            </Link>
-            <Link href="/fees/add" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 py-1">
-              💰 Record Fee Payment
-            </Link>
-            <Link href="/attendance/mark" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 py-1">
-              ✅ Mark Attendance
-            </Link>
-            <Link href="/exams/add" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 py-1">
-              📝 Schedule Exam
-            </Link>
-            <Link href="/notices/add" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 py-1">
-              📋 Post Notice
-            </Link>
+      <div className="space-y-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+          <h2 className="font-semibold text-gray-900 text-sm mb-3">Quick Actions</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { href: "/students/add", label: "➕ Add Student" },
+              { href: "/fees/add", label: "💰 Record Fee" },
+              { href: "/attendance/mark", label: "✅ Attendance" },
+              { href: "/exams/add", label: "📝 Schedule Exam" },
+              { href: "/notices/add", label: "📋 Post Notice" },
+              { href: "/reports", label: "📊 Reports" },
+            ].map((action) => (
+              <a key={action.href} href={action.href}
+                className="flex items-center text-xs text-indigo-600 font-medium bg-indigo-50 rounded-lg px-3 py-2.5 hover:bg-indigo-100">
+                {action.label}
+              </a>
+            ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Upcoming Exams</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+          <h2 className="font-semibold text-gray-900 text-sm mb-3">Upcoming Exams</h2>
           {upcomingExams.length === 0 ? (
-            <p className="text-sm text-gray-400">No upcoming exams scheduled.</p>
+            <p className="text-xs text-gray-400">No upcoming exams.</p>
           ) : (
             <div className="space-y-3">
               {upcomingExams.map(exam => (
-                <div key={exam.id} className="flex justify-between items-center text-sm">
+                <div key={exam.id} className="flex justify-between items-center">
                   <div>
-                    <div className="font-medium text-gray-900">{exam.name}</div>
-                    <div className="text-gray-500 text-xs">{exam.class} — {exam.subject}</div>
+                    <p className="text-sm font-medium text-gray-900">{exam.name}</p>
+                    <p className="text-xs text-gray-500">Class {exam.class} · {exam.subject}</p>
                   </div>
-                  <div className="text-indigo-600 text-xs font-medium">{exam.exam_date}</div>
+                  <p className="text-xs text-indigo-600 font-medium">{exam.exam_date}</p>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Recent Notices</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+          <h2 className="font-semibold text-gray-900 text-sm mb-3">Recent Notices</h2>
           {recentNotices.length === 0 ? (
-            <p className="text-sm text-gray-400">No notices posted yet.</p>
+            <p className="text-xs text-gray-400">No notices yet.</p>
           ) : (
             <div className="space-y-3">
               {recentNotices.map(notice => (
-                <div key={notice.id} className="text-sm">
-                  <div className="font-medium text-gray-900">{notice.title}</div>
-                  <div className="text-gray-500 text-xs mt-0.5">
-                    {notice.category} •{" "}
+                <div key={notice.id}>
+                  <p className="text-sm font-medium text-gray-900">{notice.title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {notice.category} ·{" "}
                     <span className={
                       notice.priority === "urgent" ? "text-red-500" :
                       notice.priority === "important" ? "text-yellow-500" :
@@ -164,7 +162,7 @@ export default async function DashboardPage() {
                     }>
                       {notice.priority}
                     </span>
-                  </div>
+                  </p>
                 </div>
               ))}
             </div>

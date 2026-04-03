@@ -10,53 +10,40 @@ export default async function TeachersPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Teachers</h1>
-          <p className="text-gray-500 text-sm mt-1">{allTeachers.length} teachers on staff</p>
+          <h1 className="text-xl font-bold text-gray-900">Teachers</h1>
+          <p className="text-gray-500 text-xs mt-0.5">{allTeachers.length} on staff</p>
         </div>
         <Link href="/teachers/add"
-          className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition text-sm font-medium shadow-sm">
-          + Add Teacher
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          + Add
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qualification</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {allTeachers.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
-                  No teachers found. Add your first teacher.
-                </td>
-              </tr>
-            ) : (
-              allTeachers.map((teacher) => (
-                <tr key={teacher.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{teacher.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{teacher.subject}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{teacher.qualification}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{teacher.phone}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{teacher.email}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <Link href={`/teachers/${teacher.id}`} className="text-indigo-600 hover:text-indigo-900 mr-3">View</Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {allTeachers.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 p-12 text-center text-gray-400 text-sm">
+          No teachers found. Add your first teacher.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {allTeachers.map((teacher) => (
+            <div key={teacher.id} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm truncate">{teacher.name}</p>
+                  <p className="text-indigo-600 text-xs font-medium mt-0.5">{teacher.subject}</p>
+                  <p className="text-gray-400 text-xs mt-1">{teacher.qualification || "—"} · {teacher.phone || "—"}</p>
+                  {teacher.email && <p className="text-gray-400 text-xs">{teacher.email}</p>}
+                </div>
+                <Link href={`/teachers/${teacher.id}`} className="ml-3 shrink-0 text-xs font-medium text-indigo-600">
+                  View
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
