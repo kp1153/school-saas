@@ -1,46 +1,31 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { students, teachers, fees, attendance, exams, notices } from "@/lib/schema";
-import { sql, eq } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export default async function DashboardPage() {
+  const cookieStore = await cookies();
+  const session = await getSession(cookieStore.get("session")?.value);
+  if (!session) redirect("/login");
+
   const today = new Date().toISOString().split("T")[0];
 
   const [studentCount] = await db.select({ count: sql`COUNT(*)` }).from(students);
   const [teacherCount] = await db.select({ count: sql`COUNT(*)` }).from(teachers);
-  const [pendingFees] = await db
-    .select({ total: sql`SUM(amount)`, count: sql`COUNT(*)` })
-    .from(fees)
-    .where(sql`status = 'pending'`);
-  const [paidFees] = await db
-    .select({ total: sql`SUM(amount)` })
-    .from(fees)
-    .where(sql`status = 'paid'`);
-  const [todayPresent] = await db
-    .select({ count: sql`COUNT(*)` })
-    .from(attendance)
-    .where(sql`date = ${today} AND status = 'present'`);
-  const [todayAbsent] = await db
-    .select({ count: sql`COUNT(*)` })
-    .from(attendance)
-    .where(sql`date = ${today} AND status = 'absent'`);
+  const [pendingFees] = await db.select({ total: sql`SUM(amount)`, count: sql`COUNT(*)` }).from(fees).where(sql`status = 'pending'`);
+  const [paidFees] = await db.select({ total: sql`SUM(amount)` }).from(fees).where(sql`status = 'paid'`);
+  const [todayPresent] = await db.select({ count: sql`COUNT(*)` }).from(attendance).where(sql`date = ${today} AND status = 'present'`);
+  const [todayAbsent] = await db.select({ count: sql`COUNT(*)` }).from(attendance).where(sql`date = ${today} AND status = 'absent'`);
   const [examCount] = await db.select({ count: sql`COUNT(*)` }).from(exams);
   const [noticeCount] = await db.select({ count: sql`COUNT(*)` }).from(notices);
 
-  const recentNotices = await db
-    .select()
-    .from(notices)
-    .orderBy(sql`created_at DESC`)
-    .limit(3);
-
-  const upcomingExams = await db
-    .select()
-    .from(exams)
-    .where(sql`exam_date >= ${today}`)
-    .orderBy(sql`exam_date ASC`)
-    .limit(3);
+  const recentNotices = await db.select().from(notices).orderBy(sql`created_at DESC`).limit(3);
+  const upcomingExams = await db.select().from(exams).where(sql`exam_date >= ${today}`).orderBy(sql`exam_date ASC`).limit(3);
 
   return (
     <div>
@@ -48,13 +33,10 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-500 text-xs mt-0.5">
-            {new Date().toLocaleDateString("en-IN", {
-              weekday: "long", day: "numeric", month: "long", year: "numeric",
-            })}
+            {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>
-        <Link href="/students/add"
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+        <Link href="/students/add" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
           + Student
         </Link>
       </div>
@@ -117,8 +99,7 @@ export default async function DashboardPage() {
               { href: "/notices/add", label: "📋 Post Notice" },
               { href: "/reports", label: "📊 Reports" },
             ].map((action) => (
-              <a key={action.href} href={action.href}
-                className="flex items-center text-xs text-indigo-600 font-medium bg-indigo-50 rounded-lg px-3 py-2.5 hover:bg-indigo-100">
+              <a key={action.href} href={action.href} className="flex items-center text-xs text-indigo-600 font-medium bg-indigo-50 rounded-lg px-3 py-2.5 hover:bg-indigo-100">
                 {action.label}
               </a>
             ))}
@@ -155,11 +136,7 @@ export default async function DashboardPage() {
                   <p className="text-sm font-medium text-gray-900">{notice.title}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
                     {notice.category} ·{" "}
-                    <span className={
-                      notice.priority === "urgent" ? "text-red-500" :
-                      notice.priority === "important" ? "text-yellow-500" :
-                      "text-gray-400"
-                    }>
+                    <span className={notice.priority === "urgent" ? "text-red-500" : notice.priority === "important" ? "text-yellow-500" : "text-gray-400"}>
                       {notice.priority}
                     </span>
                   </p>
