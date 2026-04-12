@@ -1,4 +1,3 @@
-// app/attendance/page.js
 export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db-drizzle";
@@ -13,17 +12,18 @@ export default async function AttendancePage({ searchParams }) {
   const selectedClass = params?.class || "";
 
   const allStudents = await db.select().from(students);
-  const classes = [...new Set(allStudents.map((s) => s.class))].sort();
+
+  const classes = [...new Set(allStudents.map((s) => s.class).filter(Boolean))].sort((a, b) => {
+    const na = parseInt(a); const nb = parseInt(b);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  });
 
   const filteredStudents = selectedClass
     ? allStudents.filter((s) => s.class === selectedClass)
     : allStudents;
 
-  const todayAttendance = await db
-    .select()
-    .from(attendance)
-    .where(eq(attendance.date, selectedDate));
-
+  const todayAttendance = await db.select().from(attendance).where(eq(attendance.date, selectedDate));
   const attendanceMap = {};
   todayAttendance.forEach((a) => { attendanceMap[a.student_id] = a.status; });
 
@@ -31,10 +31,25 @@ export default async function AttendancePage({ searchParams }) {
   const absentCount = filteredStudents.filter((s) => attendanceMap[s.id] === "absent").length;
   const notMarked = filteredStudents.filter((s) => !attendanceMap[s.id]).length;
 
-  // Absent students with phone numbers — for WhatsApp links
   const absentWithPhone = filteredStudents.filter(
     (s) => attendanceMap[s.id] === "absent" && s.parent_phone
   );
+
+  const classWiseSummary = classes.map((cls) => {
+    const clsStudents = allStudents.filter((s) => s.class === cls);
+    const present = clsStudents.filter((s) => attendanceMap[s.id] === "present").length;
+    const absent = clsStudents.filter((s) => attendanceMap[s.id] === "absent").length;
+    const unmarked = clsStudents.filter((s) => !attendanceMap[s.id]).length;
+    return { cls, total: clsStudents.length, present, absent, unmarked };
+  });
+
+  const grouped = {};
+  filteredStudents.forEach((s) => {
+    const sec = s.section || "—";
+    if (!grouped[sec]) grouped[sec] = [];
+    grouped[sec].push(s);
+  });
+  const sortedSections = Object.keys(grouped).sort();
 
   return (
     <div>
@@ -43,10 +58,8 @@ export default async function AttendancePage({ searchParams }) {
           <h1 className="text-xl font-bold text-gray-900">Attendance</h1>
           <p className="text-gray-500 text-xs mt-0.5">{selectedDate}</p>
         </div>
-        <Link
-          href={`/attendance/mark?date=${selectedDate}&class=${selectedClass}`}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
-        >
+        <Link href={`/attendance/mark?date=${selectedDate}&class=${selectedClass}`}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
           Mark
         </Link>
       </div>
@@ -68,9 +81,8 @@ export default async function AttendancePage({ searchParams }) {
               </select>
             </div>
           </div>
-          <button type="submit"
-            className="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium">
-            Filter
+          <button type="submit" className="w-full bg-gray-800 text-white py-2 rounded-lg text-sm font-medium">
+            Show
           </button>
         </form>
       </div>
@@ -90,31 +102,63 @@ export default async function AttendancePage({ searchParams }) {
         </div>
       </div>
 
-      {/* WhatsApp Alert Section */}
+      {!selectedClass && (
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-5">
+          <div className="bg-gray-50 px-4 py-3 border-b border-gray-100">
+            <h2 className="text-sm font-semibold text-gray-700">📊 Class-wise Attendance — {selectedDate}</h2>
+          </div>
+          {classWiseSummary.length === 0 ? (
+            <p className="text-sm text-gray-400 p-4">No classes found.</p>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {classWiseSummary.map(({ cls, total, present, absent, unmarked }) => {
+                const pct = total > 0 ? ((present / total) * 100).toFixed(0) : 0;
+                return (
+                  <div key={cls} className="px-4 py-3">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <a href={`/attendance?date=${selectedDate}&class=${cls}`}
+                        className="text-sm font-semibold text-indigo-700 hover:underline">
+                        Class {cls}
+                      </a>
+                      <span className="text-xs font-bold text-gray-700">{pct}%</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-1.5 mb-1.5">
+                      <div className="bg-green-500 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
+                    </div>
+                    <div className="flex gap-4 text-xs">
+                      <span className="text-gray-500">Total: {total}</span>
+                      <span className="text-green-600">Present: {present}</span>
+                      <span className="text-red-500">Absent: {absent}</span>
+                      {unmarked > 0 && <span className="text-yellow-500">Unmarked: {unmarked}</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {absentWithPhone.length > 0 && (
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-5">
           <p className="text-sm font-semibold text-green-800 mb-3">
-            📲 Absent Parents को WhatsApp करो ({absentWithPhone.length})
+            📲 WhatsApp Absent Parents ({absentWithPhone.length})
           </p>
           <div className="space-y-2">
             {absentWithPhone.map((s) => {
               const phone = s.parent_phone.replace(/\D/g, "");
               const fullPhone = phone.startsWith("91") ? phone : `91${phone}`;
               const msg = encodeURIComponent(
-                `प्रिय ${s.parent_name || "अभिभावक"},\n\nआपके बच्चे ${s.name} (Class ${s.class}${s.section ? " " + s.section : ""}) आज ${selectedDate} को अनुपस्थित हैं। कृपया सूचित करें।\n\n— School Management`
+                `Dear ${s.parent_name || "Parent"},\n\n${s.name} (Class ${s.class}${s.section ? " " + s.section : ""}) is absent today (${selectedDate}). Please inform the school.\n\n— School Management`
               );
               return (
-                <div key={s.id}
-                  className="flex justify-between items-center bg-white rounded-lg px-3 py-2 border border-green-100">
+                <div key={s.id} className="flex justify-between items-center bg-white rounded-lg px-3 py-2 border border-green-100">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{s.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {s.parent_name || "—"} · {s.parent_phone}
-                    </p>
+                    <p className="text-xs text-gray-500">{s.parent_name || "—"} · {s.parent_phone}</p>
                   </div>
-                  <a href={`https://wa.me/${fullPhone}?text=${msg}`}
-                    target="_blank" rel="noopener noreferrer"
-                    className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-green-700">
+                  <a href={`https://wa.me/${fullPhone}?text=${msg}`} target="_blank" rel="noopener noreferrer"
+                    className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium">
                     WhatsApp
                   </a>
                 </div>
@@ -126,30 +170,46 @@ export default async function AttendancePage({ searchParams }) {
 
       {filteredStudents.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-400 text-sm">
-          No students found.
+          {selectedClass ? "No students in this class." : "No students found."}
         </div>
-      ) : (
-        <div className="space-y-2">
-          {filteredStudents.map((student) => (
-            <div key={student.id}
-              className="bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm flex justify-between items-center">
-              <div>
-                <p className="font-medium text-gray-900 text-sm">{student.name}</p>
-                <p className="text-gray-400 text-xs">
-                  Class {student.class} {student.section} · Roll {student.roll_number}
-                </p>
+      ) : selectedClass ? (
+        <div className="space-y-4">
+          {sortedSections.map((sec) => {
+            const secStudents = grouped[sec];
+            const secPresent = secStudents.filter((s) => attendanceMap[s.id] === "present").length;
+            const secAbsent = secStudents.filter((s) => attendanceMap[s.id] === "absent").length;
+            return (
+              <div key={sec} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="bg-indigo-50 px-4 py-2 flex justify-between items-center border-b border-indigo-100">
+                  <span className="text-indigo-700 font-semibold text-xs">Section {sec} · {secStudents.length} students</span>
+                  <div className="flex gap-3 text-xs">
+                    <span className="text-green-600">P: {secPresent}</span>
+                    <span className="text-red-500">A: {secAbsent}</span>
+                  </div>
+                </div>
+                <div className="divide-y divide-gray-50">
+                  {secStudents.map((student) => (
+                    <div key={student.id} className="px-4 py-2.5 flex justify-between items-center">
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">{student.name}</p>
+                        <p className="text-gray-400 text-xs">Roll {student.roll_number || "—"}</p>
+                      </div>
+                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${
+                        attendanceMap[student.id] === "present" ? "bg-green-100 text-green-700" :
+                        attendanceMap[student.id] === "absent" ? "bg-red-100 text-red-700" :
+                        "bg-gray-100 text-gray-500"
+                      }`}>
+                        {attendanceMap[student.id] === "present" ? "✓ Present" :
+                         attendanceMap[student.id] === "absent" ? "✗ Absent" : "—"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-                attendanceMap[student.id] === "present" ? "bg-green-100 text-green-700" :
-                attendanceMap[student.id] === "absent" ? "bg-red-100 text-red-700" :
-                "bg-gray-100 text-gray-500"
-              }`}>
-                {attendanceMap[student.id] || "—"}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
