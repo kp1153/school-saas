@@ -39,7 +39,7 @@ export async function GET(request) {
       email: googleUser.email,
       name: googleUser.name || "",
       status: isDeveloper ? "active" : "trial",
-      expiry_date: isDeveloper ? null : expiry,
+      expiry_date: isDeveloper ? null : expiry.toISOString(),
       reminder_sent: 0,
     });
     const inserted = await db.select().from(users).where(eq(users.email, googleUser.email));
