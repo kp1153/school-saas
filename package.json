@@ -4,8 +4,8 @@
   "private": true,
   "main": "start-electron.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
@@ -13,7 +13,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "electron-dev": "node start-electron.js",
-    "electron-build": "next build && electron-builder"
+    "electron-build": "next build --webpack && electron-builder"
   },
   "build": {
     "appId": "com.edusaas.school",
@@ -41,8 +41,10 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
+    "arctic": "^3.7.0",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.38.4",
+    "jose": "^6.2.2",
     "jsonwebtoken": "^9.0.2",
     "next": "16.1.6",
     "react": "19.2.3",
