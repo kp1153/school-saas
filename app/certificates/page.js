@@ -144,7 +144,7 @@ export default async function CertificatesPage({ searchParams }) {
           Filter
         </button>
         {filterClass && (
-          
+          <a
             href={`/certificates?type=${filterType}`}
             className="bg-gray-100 text-gray-600 px-3 py-2 rounded-lg text-sm"
           >
