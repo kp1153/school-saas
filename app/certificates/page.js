@@ -108,7 +108,7 @@ export default async function CertificatesPage({ searchParams }) {
           { val: "bonafide", label: "Bonafide" },
           { val: "birth", label: "Birth" },
         ].map(({ val, label }) => (
-          
+          <a
             key={val}
             href={`/certificates?type=${val}&class=${filterClass}`}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${
