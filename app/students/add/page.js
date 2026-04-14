@@ -1,3 +1,5 @@
+// app/students/add/page.js
+
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
 import { students } from "@/lib/schema";
@@ -12,6 +14,15 @@ async function addStudent(formData) {
   const rollNumber = formData.get("roll_number");
   const parentName = formData.get("parent_name");
   const parentPhone = formData.get("parent_phone");
+  const admission_no = formData.get("admission_no") || null;
+  const gender = formData.get("gender") || null;
+  const dob = formData.get("dob") || null;
+  const mother_name = formData.get("mother_name") || null;
+  const address = formData.get("address") || null;
+  const religion = formData.get("religion") || null;
+  const caste = formData.get("caste") || null;
+  const aadhaar = formData.get("aadhaar") || null;
+  const academic_year = formData.get("academic_year") || null;
 
   await db.insert(students).values({
     name,
@@ -21,6 +32,15 @@ async function addStudent(formData) {
     parent_name: parentName,
     parent_phone: parentPhone,
     fee_status: "pending",
+    admission_no,
+    gender,
+    dob,
+    mother_name,
+    address,
+    religion,
+    caste,
+    aadhaar,
+    academic_year,
   });
 
   await setFlash("success", "Student added successfully!");
@@ -37,6 +57,7 @@ export default function AddStudentPage() {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-2xl">
         <form action={addStudent} className="space-y-6">
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Full Name <span className="text-red-500">*</span>
@@ -70,6 +91,36 @@ export default function AddStudentPage() {
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Admission No.
+            </label>
+            <input type="text" name="admission_no"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Gender
+              </label>
+              <select name="gender" defaultValue=""
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="">Select...</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Date of Birth
+              </label>
+              <input type="date" name="dob"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -80,11 +131,61 @@ export default function AddStudentPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mother Name
+              </label>
+              <input type="text" name="mother_name"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Parent Phone <span className="text-red-500">*</span>
               </label>
               <input type="tel" name="parent_phone" required
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Aadhaar No.
+              </label>
+              <input type="text" name="aadhaar"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Religion
+              </label>
+              <input type="text" name="religion" placeholder="e.g. Hindu"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Caste
+              </label>
+              <input type="text" name="caste"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Address
+            </label>
+            <textarea name="address" rows={2}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Academic Year
+            </label>
+            <input type="text" name="academic_year" placeholder="e.g. 2024-25"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
 
           <div className="flex gap-3 pt-2">

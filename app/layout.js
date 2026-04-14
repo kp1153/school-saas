@@ -1,3 +1,5 @@
+// app/layout.js
+
 import { Inter } from "next/font/google";
 import FlashMessageContainer from "@/components/FlashMessageContainer";
 import Link from "next/link";
@@ -95,6 +97,30 @@ export default async function RootLayout({ children }) {
                   📝 Exams & Results
                 </Link>
                 <Link
+                  href="/marksheet"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                >
+                  📄 Marksheet
+                </Link>
+                <Link
+                  href="/certificates"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                >
+                  🏅 Certificates
+                </Link>
+                <Link
+                  href="/transport"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                >
+                  🚌 Transport
+                </Link>
+                <Link
+                  href="/promote"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
+                >
+                  ⬆️ Promote
+                </Link>
+                <Link
                   href="/notices"
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-100 hover:bg-indigo-800 transition text-sm font-medium"
                 >
@@ -170,6 +196,30 @@ export default async function RootLayout({ children }) {
                 className="flex-1 min-w-[56px] flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-500"
               >
                 📝<span>Exams</span>
+              </Link>
+              <Link
+                href="/marksheet"
+                className="flex-1 min-w-[56px] flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-500"
+              >
+                📄<span>Marks</span>
+              </Link>
+              <Link
+                href="/certificates"
+                className="flex-1 min-w-[56px] flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-500"
+              >
+                🏅<span>Certs</span>
+              </Link>
+              <Link
+                href="/transport"
+                className="flex-1 min-w-[56px] flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-500"
+              >
+                🚌<span>Bus</span>
+              </Link>
+              <Link
+                href="/promote"
+                className="flex-1 min-w-[56px] flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-500"
+              >
+                ⬆️<span>Promote</span>
               </Link>
               <Link
                 href="/notices"

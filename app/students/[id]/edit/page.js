@@ -1,3 +1,5 @@
+// app/students/[id]/edit/page.js
+
 export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
@@ -19,6 +21,15 @@ async function updateStudent(formData) {
   const parentPhone = formData.get("parent_phone");
   const feeStatus = formData.get("fee_status");
   const password = formData.get("password");
+  const admission_no = formData.get("admission_no") || null;
+  const gender = formData.get("gender") || null;
+  const dob = formData.get("dob") || null;
+  const mother_name = formData.get("mother_name") || null;
+  const address = formData.get("address") || null;
+  const religion = formData.get("religion") || null;
+  const caste = formData.get("caste") || null;
+  const aadhaar = formData.get("aadhaar") || null;
+  const academic_year = formData.get("academic_year") || null;
 
   const updateData = {
     name,
@@ -28,6 +39,15 @@ async function updateStudent(formData) {
     parent_name: parentName,
     parent_phone: parentPhone,
     fee_status: feeStatus,
+    admission_no,
+    gender,
+    dob,
+    mother_name,
+    address,
+    religion,
+    caste,
+    aadhaar,
+    academic_year,
   };
 
   if (password && password.trim() !== "") {
@@ -91,6 +111,36 @@ export default async function EditStudentPage({ params }) {
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Admission No.
+            </label>
+            <input type="text" name="admission_no" defaultValue={s.admission_no || ""}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Gender
+              </label>
+              <select name="gender" defaultValue={s.gender || ""}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="">Select...</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Date of Birth
+              </label>
+              <input type="date" name="dob" defaultValue={s.dob || ""}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -101,15 +151,69 @@ export default async function EditStudentPage({ params }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mother Name
+              </label>
+              <input type="text" name="mother_name" defaultValue={s.mother_name || ""}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Parent Phone <span className="text-red-500">*</span>
               </label>
               <input type="tel" name="parent_phone" required defaultValue={s.parent_phone}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Aadhaar No.
+              </label>
+              <input type="text" name="aadhaar" defaultValue={s.aadhaar || ""}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Religion
+              </label>
+              <input type="text" name="religion" defaultValue={s.religion || ""}
+                placeholder="e.g. Hindu"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Caste
+              </label>
+              <input type="text" name="caste" defaultValue={s.caste || ""}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Fee Status</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Address
+            </label>
+            <textarea name="address" rows={2} defaultValue={s.address || ""}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Academic Year
+            </label>
+            <input type="text" name="academic_year" defaultValue={s.academic_year || ""}
+              placeholder="e.g. 2024-25"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Fee Status
+            </label>
             <select name="fee_status" defaultValue={s.fee_status}
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
               <option value="pending">Pending</option>

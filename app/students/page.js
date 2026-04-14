@@ -1,3 +1,5 @@
+// app/students/page.js
+
 export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db-drizzle";
@@ -8,9 +10,11 @@ export default async function StudentsPage({ searchParams }) {
   const params = await searchParams;
   const search = params?.search?.toLowerCase() || "";
   const selectedClass = params?.class || "";
+  const selectedYear = params?.year || "";
 
   const allStudents = await db.select().from(students);
   const classes = [...new Set(allStudents.map((s) => s.class))].sort();
+  const years = [...new Set(allStudents.map((s) => s.academic_year).filter(Boolean))].sort().reverse();
 
   const filtered = allStudents.filter((s) => {
     const matchSearch =
@@ -20,7 +24,8 @@ export default async function StudentsPage({ searchParams }) {
       s.parent_name?.toLowerCase().includes(search) ||
       s.parent_phone?.includes(search);
     const matchClass = !selectedClass || s.class === selectedClass;
-    return matchSearch && matchClass;
+    const matchYear = !selectedYear || s.academic_year === selectedYear;
+    return matchSearch && matchClass && matchYear;
   });
 
   const grouped = {};
@@ -63,7 +68,7 @@ export default async function StudentsPage({ searchParams }) {
         </div>
       </div>
 
-      <form className="bg-white rounded-xl border border-gray-100 p-3 mb-4 shadow-sm flex flex-col gap-2">
+      <form method="GET" action="/students" className="bg-white rounded-xl border border-gray-100 p-3 mb-4 shadow-sm flex flex-col gap-2">
         <input type="text" name="search" defaultValue={search}
           placeholder="🔍 Name, roll no, parent phone..."
           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
@@ -73,8 +78,13 @@ export default async function StudentsPage({ searchParams }) {
             <option value="">All Classes</option>
             {classes.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
+          <select name="year" defaultValue={selectedYear}
+            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            <option value="">All Years</option>
+            {years.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
           <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Filter</button>
-          {(search || selectedClass) && (
+          {(search || selectedClass || selectedYear) && (
             <a href="/students" className="bg-gray-100 text-gray-600 px-3 py-2 rounded-lg text-sm">✕</a>
           )}
         </div>

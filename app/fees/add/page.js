@@ -1,3 +1,5 @@
+// app/fees/add/page.js
+
 export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
@@ -13,6 +15,10 @@ async function addPayment(formData) {
   const dueDate = formData.get("due_date");
   const paidDate = formData.get("paid_date") || null;
   const status = paidDate ? "paid" : "pending";
+  const fee_type = formData.get("fee_type") || "tuition";
+  const academic_year = formData.get("academic_year") || null;
+  const month = formData.get("month") || null;
+  const receipt_no = formData.get("receipt_no") || null;
 
   await db.insert(fees).values({
     student_id: studentId,
@@ -20,6 +26,10 @@ async function addPayment(formData) {
     due_date: new Date(dueDate),
     paid_date: paidDate ? new Date(paidDate) : null,
     status,
+    fee_type,
+    academic_year,
+    month,
+    receipt_no,
   });
 
   await setFlash("success", "Fee record saved successfully!");
@@ -59,6 +69,44 @@ export default async function AddFeePage() {
             </label>
             <input type="number" name="amount" required min="1" step="1"
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fee Type <span className="text-red-500">*</span>
+              </label>
+              <select name="fee_type" defaultValue="tuition"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="tuition">Tuition</option>
+                <option value="transport">Transport</option>
+                <option value="misc">Miscellaneous</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Month
+              </label>
+              <input type="text" name="month" placeholder="e.g. April"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Academic Year
+              </label>
+              <input type="text" name="academic_year" placeholder="e.g. 2024-25"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Receipt No.
+              </label>
+              <input type="text" name="receipt_no" placeholder="e.g. RCP/2024/001"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

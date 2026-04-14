@@ -1,3 +1,5 @@
+// app/students/[id]/page.js
+
 export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db-drizzle";
@@ -67,6 +69,42 @@ export default async function StudentDetailPage({ params }) {
             <p className="text-gray-900 font-medium">
               {s.admission_date ? new Date(s.admission_date).toLocaleDateString("en-IN") : "—"}
             </p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Admission No.</p>
+            <p className="text-gray-900 font-medium">{s.admission_no || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Gender</p>
+            <p className="text-gray-900 font-medium">{s.gender || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Date of Birth</p>
+            <p className="text-gray-900 font-medium">{s.dob || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Mother Name</p>
+            <p className="text-gray-900 font-medium">{s.mother_name || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Aadhaar No.</p>
+            <p className="text-gray-900 font-medium">{s.aadhaar || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Religion</p>
+            <p className="text-gray-900 font-medium">{s.religion || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Caste</p>
+            <p className="text-gray-900 font-medium">{s.caste || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Academic Year</p>
+            <p className="text-gray-900 font-medium">{s.academic_year || "—"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-medium mb-1">Address</p>
+            <p className="text-gray-900 font-medium">{s.address || "—"}</p>
           </div>
         </div>
       </div>
