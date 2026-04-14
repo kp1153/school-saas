@@ -1,8 +1,10 @@
+// app/manifest.js
+
 export default function manifest() {
   return {
-    name: "EduSaaS School Management",
-    short_name: "EduSaaS",
-    description: "Complete school management platform",
+    name: "निशांत स्कूल सॉफ्टवेयर",
+    short_name: "स्कूल",
+    description: "विद्यालय प्रबंधन सॉफ्टवेयर",
     start_url: "/dashboard",
     display: "standalone",
     background_color: "#312e81",
@@ -13,24 +15,30 @@ export default function manifest() {
         src: "/icon-192.png",
         sizes: "192x192",
         type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
         purpose: "maskable",
       },
       {
         src: "/icon-512.png",
         sizes: "512x512",
         type: "image/png",
-        purpose: "any maskable",
+        purpose: "any",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
       },
     ],
     shortcuts: [
-      {
-        name: "Students",
-        url: "/students",
-      },
-      {
-        name: "Fees",
-        url: "/fees",
-      },
+      { name: "Students", url: "/students" },
+      { name: "Fees", url: "/fees" },
     ],
-  }
+  };
 }

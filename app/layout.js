@@ -33,7 +33,7 @@ export default async function RootLayout({ children }) {
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-        <meta name="apple-mobile-web-app-title" content="EduSaaS" />
+        <meta name="apple-mobile-web-app-title" content="निशांत स्कूल सॉफ्टवेयर" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <script
           dangerouslySetInnerHTML={{
