@@ -1,0 +1,90 @@
+// messages/hi.json
+
+{
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "students": "छात्र",
+    "admissions": "प्रवेश",
+    "teachers": "शिक्षक",
+    "fees": "फीस",
+    "attendance": "हाजिरी",
+    "exams": "परीक्षा और परिणाम",
+    "marksheet": "मार्कशीट",
+    "certificates": "प्रमाण पत्र",
+    "transport": "परिवहन",
+    "promote": "प्रोन्नति",
+    "notices": "सूचना पटल",
+    "timetable": "समय-सारणी",
+    "reports": "रिपोर्ट",
+    "settings": "सेटिंग",
+    "logout": "लॉगआउट"
+  },
+  "dashboard": {
+    "title": "डैशबोर्ड",
+    "totalStudents": "कुल छात्र",
+    "totalTeachers": "कुल शिक्षक",
+    "pendingFees": "बकाया फीस",
+    "feesCollected": "संग्रहीत फीस",
+    "presentToday": "आज उपस्थित",
+    "absentToday": "आज अनुपस्थित",
+    "totalExams": "कुल परीक्षाएं",
+    "notices": "सूचनाएं",
+    "quickActions": "त्वरित कार्य",
+    "upcomingExams": "आगामी परीक्षाएं",
+    "recentNotices": "हालिया सूचनाएं"
+  },
+  "students": {
+    "title": "छात्र",
+    "totalEnrolled": "कुल नामांकित",
+    "showing": "दिखाए जा रहे",
+    "addStudent": "+ जोड़ें",
+    "import": "आयात",
+    "search": "नाम, क्रमांक, अभिभावक का फोन...",
+    "allClasses": "सभी कक्षाएं",
+    "allYears": "सभी वर्ष",
+    "filter": "फ़िल्टर",
+    "noStudents": "कोई छात्र नहीं मिला।",
+    "class": "कक्षा",
+    "section": "अनुभाग",
+    "roll": "क्रमांक",
+    "view": "देखें",
+    "feesPaid": "फीस दी",
+    "feesPending": "फीस बाकी"
+  },
+  "fees": {
+    "title": "फीस प्रबंधन",
+    "pending": "बकाया",
+    "collected": "संग्रहीत",
+    "addRecord": "+ दर्ज करें",
+    "markPaid": "भुगतान मिला",
+    "receipt": "रसीद",
+    "remind": "याद दिलाएं",
+    "noRecords": "कोई रिकॉर्ड नहीं।"
+  },
+  "attendance": {
+    "title": "हाजिरी",
+    "present": "उपस्थित",
+    "absent": "अनुपस्थित",
+    "mark": "हाजिरी लें"
+  },
+  "certificates": {
+    "title": "प्रमाण पत्र",
+    "issue": "+ जारी करें",
+    "tc": "स्थानांतरण प्रमाण पत्र",
+    "character": "चरित्र प्रमाण पत्र",
+    "bonafide": "बोनाफाइड प्रमाण पत्र",
+    "birth": "जन्म प्रमाण पत्र",
+    "print": "प्रिंट"
+  },
+  "common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "back": "वापस",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "search": "खोजें",
+    "loading": "लोड हो रहा है...",
+    "noData": "कोई डेटा नहीं।",
+    "required": "आवश्यक"
+  }
+}

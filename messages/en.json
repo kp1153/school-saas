@@ -1,0 +1,190 @@
+// messages/en.json
+
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "students": "Students",
+    "admissions": "Admissions",
+    "teachers": "Teachers",
+    "fees": "Fees",
+    "attendance": "Attendance",
+    "exams": "Exams & Results",
+    "marksheet": "Marksheet",
+    "certificates": "Certificates",
+    "transport": "Transport",
+    "promote": "Promote",
+    "notices": "Notice Board",
+    "timetable": "Timetable",
+    "reports": "Reports",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalStudents": "Total Students",
+    "totalTeachers": "Total Teachers",
+    "pendingFees": "Pending Fees",
+    "feesCollected": "Fees Collected",
+    "presentToday": "Present Today",
+    "absentToday": "Absent Today",
+    "totalExams": "Total Exams",
+    "notices": "Notices",
+    "quickActions": "Quick Actions",
+    "upcomingExams": "Upcoming Exams",
+    "recentNotices": "Recent Notices"
+  },
+  "students": {
+    "title": "Students",
+    "totalEnrolled": "Total enrolled",
+    "showing": "Showing",
+    "addStudent": "+ Add",
+    "import": "Import",
+    "search": "Name, roll no, parent phone...",
+    "allClasses": "All Classes",
+    "allYears": "All Years",
+    "filter": "Filter",
+    "noStudents": "No students found.",
+    "class": "Class",
+    "section": "Section",
+    "roll": "Roll",
+    "view": "View",
+    "feesPaid": "Fees Paid",
+    "feesPending": "Fees Pending"
+  },
+  "fees": {
+    "title": "Fee Management",
+    "pending": "Pending",
+    "collected": "Collected",
+    "addRecord": "+ Record",
+    "markPaid": "Mark Paid",
+    "receipt": "Receipt",
+    "remind": "Remind",
+    "noRecords": "No records found."
+  },
+  "attendance": {
+    "title": "Attendance",
+    "present": "Present",
+    "absent": "Absent",
+    "mark": "Mark Attendance"
+  },
+  "certificates": {
+    "title": "Certificates",
+    "issue": "+ Issue",
+    "tc": "Transfer Certificate",
+    "character": "Character Certificate",
+    "bonafide": "Bonafide Certificate",
+    "birth": "Birth Certificate",
+    "print": "Print"
+  },
+  "exams": {
+    "title": "Exams & Results",
+    "addExam": "+ New",
+    "marksEntry": "Marks Entry",
+    "reportCard": "Report Card",
+    "noExams": "No exams yet.",
+    "examDate": "Exam Date",
+    "maxMarks": "Max Marks",
+    "passingMarks": "Passing Marks"
+  },
+  "marksheet": {
+    "title": "Marksheet",
+    "quarterly": "Quarterly Examination",
+    "halfYearly": "Half Yearly Examination",
+    "annual": "Annual Examination",
+    "unit": "Unit Test",
+    "generate": "Generate Marksheet →",
+    "noExams": "No exams found.",
+    "allYears": "All Years",
+    "selectClass": "Select Class",
+    "examType": "Exam Type",
+    "academicYear": "Academic Year"
+  },
+  "transport": {
+    "title": "Transport",
+    "routes": "Routes",
+    "students": "Students",
+    "monthly": "Monthly",
+    "addRoute": "+ Route",
+    "assign": "+ Assign",
+    "noRoutes": "No routes added yet.",
+    "noStudents": "No students assigned.",
+    "receipt": "Receipt",
+    "remind": "Remind",
+    "driver": "Driver",
+    "vehicle": "Vehicle"
+  },
+  "promote": {
+    "title": "Student Promotion",
+    "fromClass": "From Class",
+    "toClass": "To Class",
+    "academicYear": "New Academic Year",
+    "promote": "Promote Students →",
+    "warning": "This will move all students of the selected class to the next class. This cannot be undone.",
+    "currentClasses": "Current Classes",
+    "success": "Students promoted successfully!"
+  },
+  "notices": {
+    "title": "Notice Board",
+    "addNotice": "+ Notice",
+    "noNotices": "No notices yet.",
+    "general": "General",
+    "urgent": "Urgent",
+    "important": "Important"
+  },
+  "timetable": {
+    "title": "Timetable",
+    "addClass": "+ Add",
+    "noTimetable": "No timetable yet.",
+    "day": "Day",
+    "period": "Period",
+    "subject": "Subject",
+    "teacher": "Teacher",
+    "startTime": "Start Time",
+    "endTime": "End Time"
+  },
+  "reports": {
+    "title": "Reports",
+    "classWiseStudents": "Class-wise Students",
+    "feeCollection": "Fee Collection",
+    "attendance": "Attendance",
+    "examResults": "Exam Results",
+    "noData": "No data."
+  },
+  "settings": {
+    "title": "Settings",
+    "schoolName": "School Name",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "principalName": "Principal Name",
+    "affiliationNo": "Affiliation No.",
+    "schoolCode": "School Code",
+    "save": "Save Settings"
+  },
+  "teachers": {
+    "title": "Teachers",
+    "addTeacher": "+ Add",
+    "noTeachers": "No teachers yet.",
+    "subject": "Subject",
+    "qualification": "Qualification",
+    "phone": "Phone",
+    "joiningDate": "Joining Date"
+  },
+  "admissions": {
+    "title": "Admissions",
+    "newAdmissions": "New Admissions",
+    "totalEnrolled": "Total Enrolled",
+    "noAdmissions": "No admissions yet."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "← Back",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "loading": "Loading...",
+    "noData": "No data.",
+    "required": "required"
+  }
+}
