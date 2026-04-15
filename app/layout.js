@@ -5,7 +5,6 @@ import FlashMessageContainer from "@/components/FlashMessageContainer";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import Script from "next/script";
-import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
