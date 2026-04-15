@@ -1,3 +1,5 @@
+// app/dashboard/page.js
+
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
@@ -31,7 +33,7 @@ export default async function DashboardPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-xl font-bold text-gray-900">डैशबोर्ड</h1>
           <p className="text-gray-500 text-xs mt-0.5">
             {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
           </p>
@@ -45,22 +47,22 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">🎓</div>
           <div className="text-2xl font-bold text-gray-900">{studentCount?.count || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Total Students</div>
+          <div className="text-xs text-gray-500 mt-0.5">कुल छात्र</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">👨‍🏫</div>
           <div className="text-2xl font-bold text-gray-900">{teacherCount?.count || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Total Teachers</div>
+          <div className="text-xs text-gray-500 mt-0.5">कुल शिक्षक</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">⚠️</div>
           <div className="text-2xl font-bold text-red-600">₹{pendingFees?.total || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Pending Fees ({pendingFees?.count || 0})</div>
+          <div className="text-xs text-gray-500 mt-0.5">बकाया फीस ({pendingFees?.count || 0})</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">✅</div>
           <div className="text-2xl font-bold text-green-600">₹{paidFees?.total || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Fees Collected</div>
+          <div className="text-xs text-gray-500 mt-0.5">फीस जमा</div>
         </div>
       </div>
 
@@ -68,28 +70,28 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">🟢</div>
           <div className="text-2xl font-bold text-green-600">{todayPresent?.count || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Present Today</div>
+          <div className="text-xs text-gray-500 mt-0.5">आज उपस्थित</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">🔴</div>
           <div className="text-2xl font-bold text-red-500">{todayAbsent?.count || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Absent Today</div>
+          <div className="text-xs text-gray-500 mt-0.5">आज अनुपस्थित</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">📝</div>
           <div className="text-2xl font-bold text-gray-900">{examCount?.count || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Total Exams</div>
+          <div className="text-xs text-gray-500 mt-0.5">कुल परीक्षाएं</div>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
           <div className="text-2xl mb-1">📋</div>
           <div className="text-2xl font-bold text-gray-900">{noticeCount?.count || 0}</div>
-          <div className="text-xs text-gray-500 mt-0.5">Notices</div>
+          <div className="text-xs text-gray-500 mt-0.5">सूचनाएं</div>
         </div>
       </div>
 
       <div className="space-y-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 className="font-semibold text-gray-900 text-sm mb-3">Quick Actions</h2>
+          <h2 className="font-semibold text-gray-900 text-sm mb-3">त्वरित कार्य</h2>
           <div className="grid grid-cols-2 gap-2">
             {[
               { href: "/students/add", label: "➕ Add Student" },
@@ -107,7 +109,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 className="font-semibold text-gray-900 text-sm mb-3">Upcoming Exams</h2>
+          <h2 className="font-semibold text-gray-900 text-sm mb-3">आगामी परीक्षाएं</h2>
           {upcomingExams.length === 0 ? (
             <p className="text-xs text-gray-400">No upcoming exams.</p>
           ) : (
@@ -126,7 +128,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 className="font-semibold text-gray-900 text-sm mb-3">Recent Notices</h2>
+          <h2 className="font-semibold text-gray-900 text-sm mb-3">हाल की सूचनाएं</h2>
           {recentNotices.length === 0 ? (
             <p className="text-xs text-gray-400">No notices yet.</p>
           ) : (
