@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 
 export async function POST(request) {
   const { email, name, secret } = await request.json();
-  if (secret !== process.env.ACTIVATION_SECRET) {
+  if (secret !== process.env.HUB_SECRET) {
     return Response.json({ success: false }, { status: 401 });
   }
   const expiry = new Date();
