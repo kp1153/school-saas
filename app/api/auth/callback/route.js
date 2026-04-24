@@ -95,21 +95,32 @@ export async function GET(request) {
       
       user = { ...inserted, status: "active", expiry_date: activeExpiry.toISOString() };
     } else {
-      user = inserted;
-    }
-  } else {
     user = existing[0];
     const expiry = user.expiry_date ? new Date(user.expiry_date) : null;
     const isActive = user.status === "active" && (!expiry || expiry > new Date());
     const isTrial = user.status === "trial" && expiry && expiry > new Date();
 
     if (!isActive && !isTrial) {
-      return NextResponse.redirect(
-        new URL(
-          `https://nishantsoftwares.in/payment?software=school&email=${encodeURIComponent(googleUser.email)}`,
-          request.url
-        )
-      );
+      const preActivation = await db.select()
+        .from(sql`pre_activations`)
+        .where(sql`email = ${googleUser.email.toLowerCase().trim()}`)
+        .limit(1);
+
+      if (preActivation.length > 0) {
+        const activeExpiry = new Date();
+        activeExpiry.setFullYear(activeExpiry.getFullYear() + 1);
+        await db.update(users).set({
+          status: "active",
+          expiry_date: activeExpiry.toISOString(),
+          reminder_sent: 0,
+        }).where(eq(users.email, googleUser.email));
+        await db.execute(
+          sql`DELETE FROM pre_activations WHERE email = ${googleUser.email.toLowerCase().trim()}`
+        );
+        user = { ...user, status: "active", expiry_date: activeExpiry.toISOString() };
+      } else {
+        return NextResponse.redirect(new URL("/expired", request.url));
+      }
     }
   }
 
