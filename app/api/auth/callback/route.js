@@ -72,7 +72,6 @@ export async function GET(request) {
     });
     const inserted = (await db.select().from(users).where(eq(users.email, googleUser.email)))[0];
 
-    // यहाँ सिंटैक्स एरर थी, जिसे ठीक कर दिया गया है
     const preActivation = await db.select()
       .from(sql`pre_activations`)
       .where(sql`email = ${googleUser.email.toLowerCase().trim()}`)
@@ -81,20 +80,19 @@ export async function GET(request) {
     if (preActivation.length > 0) {
       const activeExpiry = new Date();
       activeExpiry.setFullYear(activeExpiry.getFullYear() + 1);
-      
       await db.update(users).set({
         status: "active",
         expiry_date: activeExpiry.toISOString(),
         reminder_sent: 0,
       }).where(eq(users.email, googleUser.email));
-      
-      // db.run की जगह db.execute का इस्तेमाल किया गया है
       await db.execute(
         sql`DELETE FROM pre_activations WHERE email = ${googleUser.email.toLowerCase().trim()}`
       );
-      
       user = { ...inserted, status: "active", expiry_date: activeExpiry.toISOString() };
     } else {
+      user = inserted;
+    }
+  } else {
     user = existing[0];
     const expiry = user.expiry_date ? new Date(user.expiry_date) : null;
     const isActive = user.status === "active" && (!expiry || expiry > new Date());
@@ -131,7 +129,7 @@ export async function GET(request) {
     user.status,
     user.expiry_date
   );
-  
+
   const response = NextResponse.redirect(new URL("/dashboard", request.url));
   response.cookies.set("session", token, {
     httpOnly: true,
@@ -140,6 +138,6 @@ export async function GET(request) {
     sameSite: "lax",
     secure: true,
   });
-  
+
   return response;
 }
