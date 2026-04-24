@@ -2,7 +2,7 @@ import { google } from "@/lib/auth";
 import { createSession } from "@/lib/session";
 import { db } from "@/lib/db-drizzle";
 import { users } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
@@ -17,7 +17,9 @@ export async function GET(request) {
   const storedState = cookieStore.get("oauth_state")?.value;
   const codeVerifier = cookieStore.get("code_verifier")?.value;
 
-  if (!code || state !== storedState) return new Response("Invalid state", { status: 400 });
+  if (!code || state !== storedState) {
+    return new Response("Invalid state", { status: 400 });
+  }
 
   const tokens = await google.validateAuthorizationCode(code, codeVerifier);
   const accessToken = tokens.accessToken();
@@ -29,6 +31,32 @@ export async function GET(request) {
   if (!googleUser.email) return NextResponse.redirect(new URL("/login", request.url));
 
   const isDeveloper = googleUser.email === DEVELOPER_EMAIL;
+
+  if (isDeveloper) {
+    const existing = await db.select().from(users).where(eq(users.email, googleUser.email));
+    if (existing.length === 0) {
+      await db.insert(users).values({
+        email: googleUser.email,
+        name: googleUser.name || "",
+        status: "active",
+        expiry_date: null,
+        reminder_sent: 0,
+      });
+    }
+    const devUser = existing[0] ||
+      (await db.select().from(users).where(eq(users.email, googleUser.email)))[0];
+    const token = await createSession(devUser.id, devUser.email, devUser.name, "active", null);
+    const response = NextResponse.redirect(new URL("/dashboard", request.url));
+    response.cookies.set("session", token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+      sameSite: "lax",
+      secure: true,
+    });
+    return response;
+  }
+
   const existing = await db.select().from(users).where(eq(users.email, googleUser.email));
   let user;
 
@@ -38,27 +66,69 @@ export async function GET(request) {
     await db.insert(users).values({
       email: googleUser.email,
       name: googleUser.name || "",
-      status: isDeveloper ? "active" : "trial",
-      expiry_date: isDeveloper ? null : expiry.toISOString(),
+      status: "trial",
+      expiry_date: expiry.toISOString(),
       reminder_sent: 0,
     });
-    const inserted = await db.select().from(users).where(eq(users.email, googleUser.email));
-    user = inserted[0];
+    const inserted = (await db.select().from(users).where(eq(users.email, googleUser.email)))[0];
+
+    // यहाँ सिंटैक्स एरर थी, जिसे ठीक कर दिया गया है
+    const preActivation = await db.select()
+      .from(sql`pre_activations`)
+      .where(sql`email = ${googleUser.email.toLowerCase().trim()}`)
+      .limit(1);
+
+    if (preActivation.length > 0) {
+      const activeExpiry = new Date();
+      activeExpiry.setFullYear(activeExpiry.getFullYear() + 1);
+      
+      await db.update(users).set({
+        status: "active",
+        expiry_date: activeExpiry.toISOString(),
+        reminder_sent: 0,
+      }).where(eq(users.email, googleUser.email));
+      
+      // db.run की जगह db.execute का इस्तेमाल किया गया है
+      await db.execute(
+        sql`DELETE FROM pre_activations WHERE email = ${googleUser.email.toLowerCase().trim()}`
+      );
+      
+      user = { ...inserted, status: "active", expiry_date: activeExpiry.toISOString() };
+    } else {
+      user = inserted;
+    }
   } else {
     user = existing[0];
-    if (!isDeveloper) {
-      const expiry = user.expiry_date ? new Date(user.expiry_date) : null;
-      const isActive = user.status === "active" && expiry && expiry > new Date();
-      const isTrial = user.status === "trial" && expiry && expiry > new Date();
-      if (!isActive && !isTrial) {
-        return NextResponse.redirect(new URL("https://nishantsoftwares.in/school?email=" + encodeURIComponent(googleUser.email), request.url));
-      }
+    const expiry = user.expiry_date ? new Date(user.expiry_date) : null;
+    const isActive = user.status === "active" && (!expiry || expiry > new Date());
+    const isTrial = user.status === "trial" && expiry && expiry > new Date();
+
+    if (!isActive && !isTrial) {
+      return NextResponse.redirect(
+        new URL(
+          `https://nishantsoftwares.in/payment?software=school&email=${encodeURIComponent(googleUser.email)}`,
+          request.url
+        )
+      );
     }
   }
 
-  const token = await createSession(user.id, user.email, user.name, user.status, user.expiry_date);
-
+  const token = await createSession(
+    user.id,
+    user.email,
+    user.name,
+    user.status,
+    user.expiry_date
+  );
+  
   const response = NextResponse.redirect(new URL("/dashboard", request.url));
-  response.cookies.set("session", token, { httpOnly: true, maxAge: 60 * 60 * 24 * 7, path: "/", sameSite: "lax", secure: true });
+  response.cookies.set("session", token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+  });
+  
   return response;
 }
