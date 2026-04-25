@@ -1,3 +1,5 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 const features = [
@@ -36,7 +38,11 @@ const howToEn = [
   { step: "4", icon: "📱", title: "Start Daily Work", desc: "Take attendance, collect fees, schedule exams — all on mobile, easily." },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  if (session) redirect("/dashboard");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white">
       <div className="max-w-5xl mx-auto px-4 py-12">
