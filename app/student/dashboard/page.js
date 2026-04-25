@@ -41,7 +41,7 @@ export default async function StudentDashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-indigo-900 text-white px-8 py-4 flex justify-between items-center">
-        <div className="font-bold text-lg">EduSaaS — Student Portal</div>
+        <div className="font-bold text-lg">निशांत स्कूल — छात्र पोर्टल</div>
         <div className="flex items-center gap-4">
           <span className="text-indigo-200 text-sm">{student.name}</span>
           <a href="/api/student/logout" className="text-red-300 text-sm hover:text-red-100">Logout</a>

@@ -1,5 +1,3 @@
-// app/dashboard/page.js
-
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
@@ -7,7 +5,7 @@ import { cookies } from "next/headers";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db-drizzle";
-import { students, teachers, fees, attendance, exams, notices } from "@/lib/schema";
+import { students, teachers, fees, attendance, exams, notices, school_settings } from "@/lib/schema";
 import { sql } from "drizzle-orm";
 
 export default async function DashboardPage() {
@@ -29,9 +27,13 @@ export default async function DashboardPage() {
   const recentNotices = await db.select().from(notices).orderBy(sql`created_at DESC`).limit(3);
   const upcomingExams = await db.select().from(exams).where(sql`exam_date >= ${today}`).orderBy(sql`exam_date ASC`).limit(3);
 
+  const settingsRows = await db.select().from(school_settings).limit(1);
+  const settings = settingsRows[0] || null;
+  const settingsIncomplete = !settings?.school_name || !settings?.principal_name;
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-5">
         <div>
           <h1 className="text-xl font-bold text-gray-900">डैशबोर्ड</h1>
           <p className="text-gray-500 text-xs mt-0.5">
@@ -42,6 +44,26 @@ export default async function DashboardPage() {
           + Student
         </Link>
       </div>
+
+      {/* Settings warning */}
+      {settingsIncomplete && (
+        <Link href="/settings" className="block bg-yellow-50 border border-yellow-300 rounded-xl px-4 py-3 mb-5">
+          <p className="text-sm font-semibold text-yellow-800">⚠️ School Settings अधूरी हैं</p>
+          <p className="text-xs text-yellow-700 mt-0.5">
+            School का नाम और Principal का नाम भरें — वरना receipts और certificates पर जानकारी नहीं आएगी।
+          </p>
+          <p className="text-xs text-yellow-600 font-medium mt-1">Settings भरें →</p>
+        </Link>
+      )}
+
+      {/* Today attendance quick alert */}
+      {Number(todayPresent?.count) === 0 && Number(todayAbsent?.count) === 0 && Number(studentCount?.count) > 0 && (
+        <Link href={`/attendance/mark?date=${today}`}
+          className="block bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3 mb-5">
+          <p className="text-sm font-semibold text-indigo-800">📋 आज की हाजिरी अभी नहीं ली गई</p>
+          <p className="text-xs text-indigo-600 font-medium mt-0.5">अभी Mark करें →</p>
+        </Link>
+      )}
 
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
@@ -96,12 +118,13 @@ export default async function DashboardPage() {
             {[
               { href: "/students/add", label: "➕ Add Student" },
               { href: "/fees/add", label: "💰 Record Fee" },
-              { href: "/attendance/mark", label: "✅ Attendance" },
+              { href: `/attendance/mark?date=${today}`, label: "✅ Attendance" },
               { href: "/exams/add", label: "📝 Schedule Exam" },
               { href: "/notices/add", label: "📋 Post Notice" },
               { href: "/reports", label: "📊 Reports" },
             ].map((action) => (
-              <a key={action.href} href={action.href} className="flex items-center text-xs text-indigo-600 font-medium bg-indigo-50 rounded-lg px-3 py-2.5 hover:bg-indigo-100">
+              <a key={action.href} href={action.href}
+                className="flex items-center text-xs text-indigo-600 font-medium bg-indigo-50 rounded-lg px-3 py-2.5 hover:bg-indigo-100">
                 {action.label}
               </a>
             ))}
@@ -111,10 +134,10 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-3">आगामी परीक्षाएं</h2>
           {upcomingExams.length === 0 ? (
-            <p className="text-xs text-gray-400">No upcoming exams.</p>
+            <p className="text-xs text-gray-400">कोई upcoming exam नहीं।</p>
           ) : (
             <div className="space-y-3">
-              {upcomingExams.map(exam => (
+              {upcomingExams.map((exam) => (
                 <div key={exam.id} className="flex justify-between items-center">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{exam.name}</p>
@@ -130,15 +153,18 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-3">हाल की सूचनाएं</h2>
           {recentNotices.length === 0 ? (
-            <p className="text-xs text-gray-400">No notices yet.</p>
+            <p className="text-xs text-gray-400">कोई notice नहीं।</p>
           ) : (
             <div className="space-y-3">
-              {recentNotices.map(notice => (
+              {recentNotices.map((notice) => (
                 <div key={notice.id}>
                   <p className="text-sm font-medium text-gray-900">{notice.title}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
                     {notice.category} ·{" "}
-                    <span className={notice.priority === "urgent" ? "text-red-500" : notice.priority === "important" ? "text-yellow-500" : "text-gray-400"}>
+                    <span className={
+                      notice.priority === "urgent" ? "text-red-500" :
+                      notice.priority === "important" ? "text-yellow-500" : "text-gray-400"
+                    }>
                       {notice.priority}
                     </span>
                   </p>

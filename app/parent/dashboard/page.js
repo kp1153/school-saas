@@ -52,8 +52,8 @@ export default async function ParentDashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-indigo-900 text-white px-6 py-4 flex justify-between items-center">
         <div>
-          <div className="text-xl font-bold">EduSaaS</div>
-          <div className="text-indigo-300 text-xs">Parent Portal</div>
+          <div className="text-xl font-bold">निशांत स्कूल</div>
+          <div className="text-indigo-300 text-xs">अभिभावक पोर्टल</div>
         </div>
         <a href="/api/parent-logout"
           className="text-indigo-300 hover:text-white text-sm">

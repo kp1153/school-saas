@@ -42,8 +42,8 @@ export default function ParentLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-10 w-full max-w-md">
-        <div className="text-3xl font-bold text-indigo-700 mb-2 text-center">EduSaaS</div>
-        <div className="text-gray-500 text-sm mb-6 text-center">Parent Portal</div>
+        <div className="text-3xl font-bold text-indigo-700 mb-2 text-center">निशांत स्कूल</div>
+        <div className="text-gray-500 text-sm mb-6 text-center">अभिभावक पोर्टल</div>
 
         <div className="flex mb-6 border border-gray-200 rounded-lg overflow-hidden">
           <button onClick={() => { setMode("login"); setError(""); setSuccess(""); }}

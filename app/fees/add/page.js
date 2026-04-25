@@ -1,5 +1,3 @@
-// app/fees/add/page.js
-
 export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
@@ -37,102 +35,115 @@ async function addPayment(formData) {
 }
 
 export default async function AddFeePage() {
-  const allStudents = await db.select().from(students);
+  const allStudents = await db.select().from(students).orderBy(students.class, students.name);
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const currentMonth = new Date().toLocaleString("en-IN", { month: "long" });
+  const now = new Date();
+  const baseYear = now.getMonth() < 3 ? now.getFullYear() - 1 : now.getFullYear();
+  const currentAcademicYear = `${baseYear}-${String(baseYear + 1).slice(-2)}`;
+
+  const months = [
+    "April", "May", "June", "July", "August", "September",
+    "October", "November", "December", "January", "February", "March",
+  ];
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Record Fee Payment</h1>
-        <p className="text-gray-500 text-sm mt-1">Add a new fee entry for a student</p>
+      <div className="mb-5">
+        <h1 className="text-xl font-bold text-gray-900">Record Fee Payment</h1>
+        <p className="text-gray-500 text-xs mt-0.5">छात्र की फीस यहाँ दर्ज करें</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-2xl">
-        <form action={addPayment} className="space-y-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <form action={addPayment} className="space-y-4">
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select Student <span className="text-red-500">*</span>
+              Student <span className="text-red-500">*</span>
             </label>
             <select name="student_id" required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="">Choose a student...</option>
-              {allStudents.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.name} — {student.class} {student.section}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">छात्र चुनें...</option>
+              {allStudents.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} — Class {s.class} {s.section || ""}
                 </option>
               ))}
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount (₹) <span className="text-red-500">*</span>
-            </label>
-            <input type="number" name="amount" required min="1" step="1"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Amount (₹) <span className="text-red-500">*</span>
+              </label>
+              <input type="number" name="amount" required min="1" step="1"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Fee Type <span className="text-red-500">*</span>
               </label>
               <select name="fee_type" defaultValue="tuition"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="tuition">Tuition</option>
                 <option value="transport">Transport</option>
                 <option value="misc">Miscellaneous</option>
               </select>
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Month
-              </label>
-              <input type="text" name="month" placeholder="e.g. April"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Month</label>
+              <select name="month" defaultValue={currentMonth}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="">Select...</option>
+                {months.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Academic Year</label>
+              <input type="text" name="academic_year" defaultValue={currentAcademicYear}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Academic Year
-              </label>
-              <input type="text" name="academic_year" placeholder="e.g. 2024-25"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Receipt No.
-              </label>
-              <input type="text" name="receipt_no" placeholder="e.g. RCP/2024/001"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Due Date <span className="text-red-500">*</span>
               </label>
-              <input type="date" name="due_date" required
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <input type="date" name="due_date" required defaultValue={today}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Paid Date <span className="text-gray-400 font-normal">(leave empty if pending)</span>
+                Paid Date
+                <span className="text-gray-400 font-normal text-xs ml-1">(खाली = pending)</span>
               </label>
-              <input type="date" name="paid_date"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <input type="date" name="paid_date" defaultValue={today}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Receipt No.</label>
+            <input type="text" name="receipt_no" placeholder="e.g. RCP/2024/001"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
 
           <div className="flex gap-3 pt-2">
             <button type="submit"
-              className="bg-indigo-600 text-white px-6 py-2.5 rounded-lg hover:bg-indigo-700 text-sm font-medium">
+              className="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-medium">
               Save Payment
             </button>
             <a href="/fees"
-              className="bg-gray-100 text-gray-700 px-6 py-2.5 rounded-lg hover:bg-gray-200 text-sm font-medium">
+              className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-lg text-sm font-medium text-center">
               Cancel
             </a>
           </div>

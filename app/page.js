@@ -50,7 +50,7 @@ export default async function HomePage() {
         {/* Hero */}
         <div className="text-center mb-14">
           <div className="inline-block px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-5">
-            🏫 School Management Platform
+            🏫 विद्यालय प्रबंधन सॉफ्टवेयर
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
             स्कूल का सारा काम<br />

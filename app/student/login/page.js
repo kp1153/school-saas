@@ -26,8 +26,8 @@ export default function StudentLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-10 w-full max-w-md">
-        <div className="text-3xl font-bold text-indigo-700 mb-2 text-center">EduSaaS</div>
-        <div className="text-gray-500 text-sm mb-8 text-center">Student Portal</div>
+        <div className="text-3xl font-bold text-indigo-700 mb-2 text-center">निशांत स्कूल</div>
+        <div className="text-gray-500 text-sm mb-8 text-center">छात्र पोर्टल</div>
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm mb-4">
             {error}

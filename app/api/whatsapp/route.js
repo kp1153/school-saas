@@ -33,7 +33,7 @@ export async function GET(req) {
       const phone = s.parent_phone.replace(/\D/g, "");
       const fullPhone = phone.startsWith("91") ? phone : `91${phone}`;
       const message = encodeURIComponent(
-        `प्रिय ${s.parent_name || "अभिभावक"},\n\nआपके बच्चे ${s.name} (Class ${s.class}${s.section ? " " + s.section : ""}) आज ${date} को स्कूल में अनुपस्थित हैं।\n\nकृपया सूचित करें।\n\n— EduSaaS School`
+        `प्रिय ${s.parent_name || "अभिभावक"},\n\nआपके बच्चे ${s.name} (Class ${s.class}${s.section ? " " + s.section : ""}) आज ${date} को स्कूल में अनुपस्थित हैं।\n\nकृपया सूचित करें।\n\n— निशांत स्कूल`
       );
       return {
         student_name: s.name,

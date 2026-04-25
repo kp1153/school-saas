@@ -1,5 +1,3 @@
-// app/promote/page.js
-
 export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
@@ -28,13 +26,17 @@ async function promoteStudents(formData) {
     })
     .where(eq(students.class, from_class));
 
-  await setFlash("success", `Class ${from_class} के students Class ${to_class} में promote हो गए!`);
+  await setFlash("success", `Class ${from_class} → Class ${to_class} promotion हो गई!`);
   redirect("/promote");
 }
 
 export default async function PromotePage() {
   const allStudents = await db.select().from(students);
-  const classes = [...new Set(allStudents.map((s) => s.class))].sort();
+  const classes = [...new Set(allStudents.map((s) => s.class).filter(Boolean))].sort((a, b) => {
+    const na = parseInt(a), nb = parseInt(b);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  });
 
   const now = new Date();
   const baseYear = now.getMonth() < 3 ? now.getFullYear() - 1 : now.getFullYear();
@@ -45,21 +47,23 @@ export default async function PromotePage() {
     classCounts[s.class] = (classCounts[s.class] || 0) + 1;
   });
 
+  const allClassOptions = [
+    "Nursery", "LKG", "UKG",
+    "1", "2", "3", "4", "5", "6",
+    "7", "8", "9", "10", "11", "12",
+  ];
+
   return (
     <div>
       <div className="mb-4">
         <h1 className="text-xl font-bold text-gray-900">Student Promotion</h1>
-        <p className="text-gray-500 text-xs mt-0.5">
-          Class-wise bulk promotion — नया academic year
-        </p>
+        <p className="text-gray-500 text-xs mt-0.5">Class-wise bulk promotion — नया academic year</p>
       </div>
 
-      {/* Warning */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mb-4 text-xs text-yellow-800">
         ⚠️ यह action सभी selected class के students को अगली class में move कर देगा। एक बार हो जाने के बाद undo नहीं होगा।
       </div>
 
-      {/* Current Class Summary */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
         <p className="text-xs font-medium text-gray-600 mb-3">Current Classes</p>
         <div className="grid grid-cols-3 gap-2">
@@ -72,21 +76,16 @@ export default async function PromotePage() {
         </div>
       </div>
 
-      {/* Promotion Form */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
         <p className="text-xs font-medium text-gray-600 mb-3">Promote Students</p>
         <form action={promoteStudents} className="space-y-4">
 
-          {/* From Class */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               From Class <span className="text-red-500">*</span>
             </label>
-            <select
-              name="from_class"
-              required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
+            <select name="from_class" required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
               <option value="">Select class to promote...</option>
               {classes.map((c) => (
                 <option key={c} value={c}>
@@ -96,39 +95,31 @@ export default async function PromotePage() {
             </select>
           </div>
 
-          {/* To Class */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               To Class <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              name="to_class"
-              required
-              placeholder="e.g. 6"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            <select name="to_class" required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">Promote करके किस class में जाएंगे...</option>
+              {allClassOptions.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
 
-          {/* New Academic Year */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               New Academic Year <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              name="new_academic_year"
-              required
+            <input type="text" name="new_academic_year" required
               defaultValue={nextAcademicYear}
               placeholder="e.g. 2025-26"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-medium"
-          >
+          <button type="submit"
+            className="w-full bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-medium">
             Promote Students →
           </button>
         </form>
