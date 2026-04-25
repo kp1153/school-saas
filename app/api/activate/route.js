@@ -40,7 +40,6 @@ export async function POST(request) {
         .update(users)
         .set({
           status: "active",
-          active: 1,
           expiry_date: expiry.toISOString(),
           reminder_sent: 0,
         })

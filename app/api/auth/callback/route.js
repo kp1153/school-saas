@@ -8,6 +8,18 @@ import { cookies } from "next/headers";
 
 const DEVELOPER_EMAIL = "prasad.kamta@gmail.com";
 
+function redirectWithCookie(request, path, token) {
+  const response = NextResponse.redirect(new URL(path, request.url));
+  response.cookies.set("session", token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+  });
+  return response;
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
@@ -46,15 +58,7 @@ export async function GET(request) {
     const devUser = existing[0] ||
       (await db.select().from(users).where(eq(users.email, googleUser.email)))[0];
     const token = await createSession(devUser.id, devUser.email, devUser.name, "active", null);
-    const response = NextResponse.redirect(new URL("/dashboard", request.url));
-    response.cookies.set("session", token, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-      sameSite: "lax",
-      secure: true,
-    });
-    return response;
+    return redirectWithCookie(request, "/dashboard", token);
   }
 
   const existing = await db.select().from(users).where(eq(users.email, googleUser.email));
@@ -117,7 +121,14 @@ export async function GET(request) {
         );
         user = { ...user, status: "active", expiry_date: activeExpiry.toISOString() };
       } else {
-        return NextResponse.redirect(new URL("/expired", request.url));
+        const token = await createSession(
+          user.id,
+          user.email,
+          user.name,
+          user.status,
+          user.expiry_date
+        );
+        return redirectWithCookie(request, "/expired", token);
       }
     }
   }
@@ -130,14 +141,5 @@ export async function GET(request) {
     user.expiry_date
   );
 
-  const response = NextResponse.redirect(new URL("/dashboard", request.url));
-  response.cookies.set("session", token, {
-    httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7,
-    path: "/",
-    sameSite: "lax",
-    secure: true,
-  });
-
-  return response;
+  return redirectWithCookie(request, "/dashboard", token);
 }
