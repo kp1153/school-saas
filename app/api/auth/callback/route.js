@@ -1,21 +1,19 @@
 import { google } from "@/lib/auth";
 import { createSession } from "@/lib/session";
 import { db } from "@/lib/db-drizzle";
-import { users } from "@/lib/schema";
-import { eq, sql } from "drizzle-orm";
+import { users, preActivations } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-const DEVELOPER_EMAIL = "prasad.kamta@gmail.com";
 
 function redirectWithCookie(request, path, token) {
   const response = NextResponse.redirect(new URL(path, request.url));
   response.cookies.set("session", token, {
     httpOnly: true,
+    secure: true,
+    sameSite: "lax",
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
-    sameSite: "lax",
-    secure: true,
   });
   return response;
 }
@@ -29,117 +27,89 @@ export async function GET(request) {
   const storedState = cookieStore.get("oauth_state")?.value;
   const codeVerifier = cookieStore.get("code_verifier")?.value;
 
-  if (!code || state !== storedState) {
-    return new Response("Invalid state", { status: 400 });
+  // ✅ Fix 2: !state भी check करो
+  if (!code || !state || state !== storedState) {
+    return NextResponse.redirect(new URL("/login?error=invalid", request.url));
   }
 
-  const tokens = await google.validateAuthorizationCode(code, codeVerifier);
-  const accessToken = tokens.accessToken();
+  // ✅ Fix 1: पूरा logic try/catch में
+  try {
+    const tokens = await google.validateAuthorizationCode(code, codeVerifier);
+    const accessToken = tokens.accessToken();
 
-  const googleRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  const googleUser = await googleRes.json();
-  if (!googleUser.email) return NextResponse.redirect(new URL("/login", request.url));
+    const googleRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const googleUser = await googleRes.json();
+    if (!googleUser.email) {
+      return NextResponse.redirect(new URL("/login?error=invalid", request.url));
+    }
 
-  const isDeveloper = googleUser.email === DEVELOPER_EMAIL;
+    let existing = await db.select().from(users).where(eq(users.email, googleUser.email));
+    let user;
 
-  if (isDeveloper) {
-    const existing = await db.select().from(users).where(eq(users.email, googleUser.email));
     if (existing.length === 0) {
+      // नया user — trial पर insert करो
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 7);
+
       await db.insert(users).values({
         email: googleUser.email,
         name: googleUser.name || "",
-        status: "active",
-        expiry_date: null,
+        status: "trial",
+        expiry_date: expiry.toISOString(),
         reminder_sent: 0,
       });
-    }
-    const devUser = existing[0] ||
-      (await db.select().from(users).where(eq(users.email, googleUser.email)))[0];
-    const token = await createSession(devUser.id, devUser.email, devUser.name, "active", null);
-    return redirectWithCookie(request, "/dashboard", token);
-  }
 
-  const existing = await db.select().from(users).where(eq(users.email, googleUser.email));
-  let user;
-
-  if (existing.length === 0) {
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + 7);
-    await db.insert(users).values({
-      email: googleUser.email,
-      name: googleUser.name || "",
-      status: "trial",
-      expiry_date: expiry.toISOString(),
-      reminder_sent: 0,
-    });
-    const inserted = (await db.select().from(users).where(eq(users.email, googleUser.email)))[0];
-
-    const preActivation = await db.select()
-      .from(sql`pre_activations`)
-      .where(sql`email = ${googleUser.email.toLowerCase().trim()}`)
-      .limit(1);
-
-    if (preActivation.length > 0) {
-      const activeExpiry = new Date();
-      activeExpiry.setFullYear(activeExpiry.getFullYear() + 1);
-      await db.update(users).set({
-        status: "active",
-        expiry_date: activeExpiry.toISOString(),
-        reminder_sent: 0,
-      }).where(eq(users.email, googleUser.email));
-      await db.execute(
-        sql`DELETE FROM pre_activations WHERE email = ${googleUser.email.toLowerCase().trim()}`
-      );
-      user = { ...inserted, status: "active", expiry_date: activeExpiry.toISOString() };
-    } else {
-      user = inserted;
-    }
-  } else {
-    user = existing[0];
-    const expiry = user.expiry_date ? new Date(user.expiry_date) : null;
-    const isActive = user.status === "active" && (!expiry || expiry > new Date());
-    const isTrial = user.status === "trial" && expiry && expiry > new Date();
-
-    if (!isActive && !isTrial) {
-      const preActivation = await db.select()
-        .from(sql`pre_activations`)
-        .where(sql`email = ${googleUser.email.toLowerCase().trim()}`)
+      // ✅ Fix 4: preActivation सिर्फ नए user के लिए
+      const preAct = await db
+        .select()
+        .from(preActivations)
+        .where(eq(preActivations.email, googleUser.email))
         .limit(1);
 
-      if (preActivation.length > 0) {
+      if (preAct.length > 0) {
         const activeExpiry = new Date();
         activeExpiry.setFullYear(activeExpiry.getFullYear() + 1);
+
         await db.update(users).set({
           status: "active",
           expiry_date: activeExpiry.toISOString(),
           reminder_sent: 0,
         }).where(eq(users.email, googleUser.email));
-        await db.execute(
-          sql`DELETE FROM pre_activations WHERE email = ${googleUser.email.toLowerCase().trim()}`
-        );
-        user = { ...user, status: "active", expiry_date: activeExpiry.toISOString() };
-      } else {
-        const token = await createSession(
-          user.id,
-          user.email,
-          user.name,
-          user.status,
-          user.expiry_date
-        );
-        return redirectWithCookie(request, "/expired", token);
+
+        await db.delete(preActivations).where(eq(preActivations.email, googleUser.email));
       }
+
+      existing = await db.select().from(users).where(eq(users.email, googleUser.email));
     }
+
+    user = existing[0];
+
+    const token = await createSession(
+      user.id, user.email, user.name, user.status, user.expiry_date
+    );
+
+    // ✅ Fix 3: Developer check सिर्फ एक line, session बनने के बाद
+    if (user.email === "prasad.kamta@gmail.com") {
+      return redirectWithCookie(request, "/dashboard", token);
+    }
+
+    if (user.status === "active") {
+      return redirectWithCookie(request, "/dashboard", token);
+    }
+
+    const now = new Date();
+    const expiryDate = user.expiry_date ? new Date(user.expiry_date) : null;
+
+    if (user.status === "trial" && expiryDate && now < expiryDate) {
+      return redirectWithCookie(request, "/dashboard", token);
+    }
+
+    return redirectWithCookie(request, "/expired", token);
+
+  } catch (e) {
+    console.error(e);
+    return NextResponse.redirect(new URL("/login?error=failed", request.url));
   }
-
-  const token = await createSession(
-    user.id,
-    user.email,
-    user.name,
-    user.status,
-    user.expiry_date
-  );
-
-  return redirectWithCookie(request, "/dashboard", token);
 }
