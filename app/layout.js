@@ -1,11 +1,10 @@
-// app/layout.js
-
 import { Inter } from "next/font/google";
 import FlashMessageContainer from "@/components/FlashMessageContainer";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import Script from "next/script";
 import "./globals.css";
+import { getSession } from "@/lib/session";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +31,8 @@ export const viewport = {
 
 export default async function RootLayout({ children }) {
   const cookieStore = await cookies();
-  const session = cookieStore.get("session")?.value;
+  const token = cookieStore.get("session")?.value;
+  const user = token ? await getSession(token) : null;
 
   return (
     <html lang="hi">
@@ -44,7 +44,7 @@ export default async function RootLayout({ children }) {
         />
         <FlashMessageContainer />
 
-        {session ? (
+        {user ? (
           <div className="flex min-h-screen">
             <aside className="hidden md:flex w-64 bg-indigo-900 text-white flex-col fixed h-full overflow-y-auto">
               <div className="px-6 py-5 border-b border-indigo-800">
