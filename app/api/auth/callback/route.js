@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 function redirectWithCookie(request, path, token) {
-  const response = NextResponse.redirect(new URL(path, request.url), {
+  const response = NextResponse.redirect("https://school.nishantsoftwares.in" + path);
     status: 302,
   });
   response.cookies.set("session", token, {
