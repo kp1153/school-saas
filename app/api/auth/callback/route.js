@@ -52,10 +52,12 @@ export async function GET(request) {
       );
     }
 
+    const normalizedEmail = googleUser.email.toLowerCase().trim();
+
     let existing = await db
       .select()
       .from(users)
-      .where(eq(users.email, googleUser.email));
+      .where(eq(users.email, normalizedEmail));
     let user;
 
     if (existing.length === 0) {
@@ -64,7 +66,7 @@ export async function GET(request) {
       expiry.setDate(expiry.getDate() + 7);
 
       await db.insert(users).values({
-        email: googleUser.email,
+        email: normalizedEmail,
         name: googleUser.name || "",
         status: "trial",
         expiry_date: expiry.toISOString(),
@@ -75,7 +77,7 @@ export async function GET(request) {
       const preAct = await db
         .select()
         .from(preActivations)
-        .where(eq(preActivations.email, googleUser.email))
+        .where(eq(preActivations.email, normalizedEmail))
         .limit(1);
 
       if (preAct.length > 0) {
@@ -89,17 +91,17 @@ export async function GET(request) {
             expiry_date: activeExpiry.toISOString(),
             reminder_sent: 0,
           })
-          .where(eq(users.email, googleUser.email));
+          .where(eq(users.email, normalizedEmail));
 
         await db
           .delete(preActivations)
-          .where(eq(preActivations.email, googleUser.email));
+          .where(eq(preActivations.email, normalizedEmail));
       }
 
       existing = await db
         .select()
         .from(users)
-        .where(eq(users.email, googleUser.email));
+        .where(eq(users.email, normalizedEmail));
     }
 
     user = existing[0];
