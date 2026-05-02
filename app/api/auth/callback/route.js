@@ -7,7 +7,9 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 function redirectWithCookie(request, path, token) {
-  const response = NextResponse.redirect(new URL(path, request.url));
+  const response = NextResponse.redirect(new URL(path, request.url), {
+    status: 302,
+  });
   response.cookies.set("session", token, {
     httpOnly: true,
     secure: true,
@@ -37,15 +39,23 @@ export async function GET(request) {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
     const accessToken = tokens.accessToken();
 
-    const googleRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const googleRes = await fetch(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
     const googleUser = await googleRes.json();
     if (!googleUser.email) {
-      return NextResponse.redirect(new URL("/login?error=invalid", request.url));
+      return NextResponse.redirect(
+        new URL("/login?error=invalid", request.url),
+      );
     }
 
-    let existing = await db.select().from(users).where(eq(users.email, googleUser.email));
+    let existing = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, googleUser.email));
     let user;
 
     if (existing.length === 0) {
@@ -72,22 +82,34 @@ export async function GET(request) {
         const activeExpiry = new Date();
         activeExpiry.setFullYear(activeExpiry.getFullYear() + 1);
 
-        await db.update(users).set({
-          status: "active",
-          expiry_date: activeExpiry.toISOString(),
-          reminder_sent: 0,
-        }).where(eq(users.email, googleUser.email));
+        await db
+          .update(users)
+          .set({
+            status: "active",
+            expiry_date: activeExpiry.toISOString(),
+            reminder_sent: 0,
+          })
+          .where(eq(users.email, googleUser.email));
 
-        await db.delete(preActivations).where(eq(preActivations.email, googleUser.email));
+        await db
+          .delete(preActivations)
+          .where(eq(preActivations.email, googleUser.email));
       }
 
-      existing = await db.select().from(users).where(eq(users.email, googleUser.email));
+      existing = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, googleUser.email));
     }
 
     user = existing[0];
 
     const token = await createSession(
-      user.id, user.email, user.name, user.status, user.expiry_date
+      user.id,
+      user.email,
+      user.name,
+      user.status,
+      user.expiry_date,
     );
 
     // ✅ Fix 3: Developer check सिर्फ एक line, session बनने के बाद
@@ -107,7 +129,6 @@ export async function GET(request) {
     }
 
     return redirectWithCookie(request, "/expired", token);
-
   } catch (e) {
     console.error(e);
     return NextResponse.redirect(new URL("/login?error=failed", request.url));
