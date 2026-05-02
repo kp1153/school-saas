@@ -8,8 +8,6 @@ import { cookies } from "next/headers";
 
 function redirectWithCookie(request, path, token) {
   const response = NextResponse.redirect("https://school.nishantsoftwares.in" + path);
-    status: 302,
-  });
   response.cookies.set("session", token, {
     httpOnly: true,
     secure: true,
@@ -52,12 +50,10 @@ export async function GET(request) {
       );
     }
 
-    const normalizedEmail = googleUser.email.toLowerCase().trim();
-
     let existing = await db
       .select()
       .from(users)
-      .where(eq(users.email, normalizedEmail));
+      .where(eq(users.email, googleUser.email));
     let user;
 
     if (existing.length === 0) {
@@ -66,7 +62,7 @@ export async function GET(request) {
       expiry.setDate(expiry.getDate() + 7);
 
       await db.insert(users).values({
-        email: normalizedEmail,
+        email: googleUser.email,
         name: googleUser.name || "",
         status: "trial",
         expiry_date: expiry.toISOString(),
@@ -77,7 +73,7 @@ export async function GET(request) {
       const preAct = await db
         .select()
         .from(preActivations)
-        .where(eq(preActivations.email, normalizedEmail))
+        .where(eq(preActivations.email, googleUser.email))
         .limit(1);
 
       if (preAct.length > 0) {
@@ -91,17 +87,17 @@ export async function GET(request) {
             expiry_date: activeExpiry.toISOString(),
             reminder_sent: 0,
           })
-          .where(eq(users.email, normalizedEmail));
+          .where(eq(users.email, googleUser.email));
 
         await db
           .delete(preActivations)
-          .where(eq(preActivations.email, normalizedEmail));
+          .where(eq(preActivations.email, googleUser.email));
       }
 
       existing = await db
         .select()
         .from(users)
-        .where(eq(users.email, normalizedEmail));
+        .where(eq(users.email, googleUser.email));
     }
 
     user = existing[0];
@@ -132,7 +128,7 @@ export async function GET(request) {
 
     return redirectWithCookie(request, "/expired", token);
   } catch (e) {
-    console.error("CALLBACK_ERROR:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
-    return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(e.message)}`, request.url));
+    console.error(e);
+    return NextResponse.redirect(new URL("/login?error=failed", request.url));
   }
 }
