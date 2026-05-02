@@ -1,24 +1,38 @@
+const { app, BrowserWindow } = require("electron");
 const { spawn } = require("child_process");
 const http = require("http");
 
+let mainWindow;
+
 function waitForServer(retries, cb) {
-  http.get("http://localhost:3000", () => cb()).on("error", () => {
+  http.get("http://localhost:3000", (res) => cb()).on("error", () => {
     if (retries === 0) return;
     setTimeout(() => waitForServer(retries - 1, cb), 1000);
   });
 }
 
-const next = spawn("npx", ["next", "dev", "--port", "3000"], {
-  shell: true,
-  stdio: "inherit",
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: false,
+    },
+  });
+  mainWindow.loadURL("http://localhost:3000");
+}
+
+app.whenReady().then(() => {
+  const next = spawn("npx", ["next", "dev", "--port", "3000"], {
+    shell: true,
+    stdio: "inherit",
+  });
+
+  waitForServer(60, () => {
+    createWindow();
+  });
 });
 
-setTimeout(() => {
-  waitForServer(30, () => {
-    const { app, BrowserWindow } = require("electron");
-    app.whenReady().then(() => {
-      const win = new BrowserWindow({ width: 1280, height: 800 });
-      win.loadURL("http://localhost:3000");
-    });
-  });
-}, 3000);
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});
