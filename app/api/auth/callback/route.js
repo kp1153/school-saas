@@ -130,7 +130,7 @@ export async function GET(request) {
 
     return redirectWithCookie(request, "/expired", token);
   } catch (e) {
-    console.error(e);
-    return NextResponse.redirect(new URL("/login?error=failed", request.url));
+    console.error("CALLBACK_ERROR:", JSON.stringify(e, Object.getOwnPropertyNames(e)));
+    return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(e.message)}`, request.url));
   }
 }
