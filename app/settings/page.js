@@ -1,14 +1,29 @@
 export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db-drizzle";
-import { school_settings } from "@/lib/schema";
+import { school_settings, users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { setFlash } from "@/lib/flash";
+import { getSession } from "@/lib/session";
+import { cookies } from "next/headers";
 
 async function saveSettings(formData) {
   "use server";
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+  if (!token) redirect("/login");
+
+  const session = await getSession(token);
+  if (!session) redirect("/login");
+
+  const userResult = await db.select().from(users).where(eq(users.email, session.email));
+  const user = userResult[0];
+  if (!user) redirect("/login");
+
   const data = {
+    user_id: user.id,
     school_name: formData.get("school_name"),
     address: formData.get("address"),
     phone: formData.get("phone"),
@@ -20,10 +35,10 @@ async function saveSettings(formData) {
     updated_at: new Date(),
   };
 
-  const existing = await db.select().from(school_settings);
+  const existing = await db.select().from(school_settings).where(eq(school_settings.user_id, user.id));
 
   if (existing.length > 0) {
-    await db.update(school_settings).set(data);
+    await db.update(school_settings).set(data).where(eq(school_settings.user_id, user.id));
   } else {
     await db.insert(school_settings).values(data);
   }
@@ -33,7 +48,18 @@ async function saveSettings(formData) {
 }
 
 export default async function SettingsPage() {
-  const result = await db.select().from(school_settings);
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+  if (!token) redirect("/login");
+
+  const session = await getSession(token);
+  if (!session) redirect("/login");
+
+  const userResult = await db.select().from(users).where(eq(users.email, session.email));
+  const user = userResult[0];
+  if (!user) redirect("/login");
+
+  const result = await db.select().from(school_settings).where(eq(school_settings.user_id, user.id));
   const s = result[0] || {};
 
   return (
